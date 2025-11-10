@@ -6,6 +6,6 @@
 
 You can run the solution for day `X` and part `Y` with the following command.
 ```sh
-cat DayX/input.txt | cabal exec -O2 runghc DayX/Y.hs
+cat DayX/input.txt | cabal exec runghc DayX/Y.hs
 ```
 
