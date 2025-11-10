@@ -1,0 +1,11 @@
+cabal-version: 3.4
+name: aoc25
+version: 0.1.0.0
+
+library
+  build-depends:
+    base,
+    parsec
+  hs-source-dirs: .
+  default-language: GHC2021
+
