@@ -10,7 +10,7 @@ aoc() {
   # cabal exec runghc does not install them automatically
   cabal build --only-dependencies
 
-  if cabal exec ghc -- -O2 -main-is "Day$day.$2.main" -o "$prog" "$src"; then
+  if cabal exec ghc -- -O2 -main-is "Day$day.$part.main" -o "$prog" "$src"; then
     if [ -f "$input" ]; then
       "$prog" < "$input"
     else
