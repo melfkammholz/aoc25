@@ -15,7 +15,7 @@ cabal build --only-dependencies
 
 You can run the solution for day `X` and part `Y` with the following command.
 ```sh
-cat DayX/input.txt | cabal exec runghc DayX/Y.hs
+cabal exec runghc DayX/Y.hs < DayX/input.txt
 ```
 
 You can also run `aoc.zsh` in your current shell to add the `aoc` command.

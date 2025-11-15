@@ -1,7 +1,7 @@
 aoc() {
   local day=$(printf "%02d" $1)
-
   local part="$2"
+
   local input="Day$day/input.txt"
   local src="Day$day/$part.hs"
   local prog="Day$day/$part"
