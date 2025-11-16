@@ -1,6 +1,6 @@
 aoc() {
   if [[ $# -lt 2 ]]; then
-    echo "Usage: aoc <day> <part> [--no-input | --input file]"
+    echo "Usage: aoc <day> <part> [--no-input | --input file]" >&2
     return 1
   fi
 
@@ -14,21 +14,21 @@ aoc() {
   prog="Day$day/$part"
 
   while [[ $# -gt 0 ]]; do
-    case $1 in
+    case "$1" in
       --no-input)
         noinp=1
         ;;
       --input)
         shift
         if [[ -z "$1" ]]; then
-          echo "Error: --input requires a file argument"
+          echo "Error: --input requires a file argument" >&2
           return 1
         fi
         noinp=0
         input="$1"
         ;;
       -*|--*)
-        echo "Error: Unknown option $1" >%2
+        echo "Error: Unknown option $1" >&2
         return 1
       ;;
     esac
