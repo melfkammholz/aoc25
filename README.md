@@ -27,4 +27,5 @@ and compiles the program.
 ## Challenges
 
 - Implement some purely functional data structures ([Okasaki](https://www.cs.cmu.edu/~rwh/students/okasaki.pdf))
+- If graph algorithms come up, look at [Structuring depth-first search algorithms in Haskell](https://dl.acm.org/doi/10.1145/199448.199530)
 
