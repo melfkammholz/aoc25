@@ -24,3 +24,7 @@ for day `X` and part `Y` with `aoc X Y`. It installs any missing dependencies
 and compiles the program.
 
 
+## Challenges
+
+- Implement some purely functional data structures ([Okasaki](https://www.cs.cmu.edu/~rwh/students/okasaki.pdf))
+
