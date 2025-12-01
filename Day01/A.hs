@@ -1,33 +1,38 @@
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE PatternSynonyms #-}
+{-# LANGUAGE ViewPatterns #-}
 module Day01.A where
 
 import Text.Parsec
 import Text.Parsec.Char
-import Utils (ModInt, modInt, toInt, Parser, numP)
+import Utils
 
 
 data Rot = RotL Int | RotR Int
   deriving Show
 
 rotP :: Parser Rot
-rotP = (RotL <$> (char 'L' *> numP)) <|> (RotR <$> (char 'R' *> numP))
+rotP = RotL <$> (char 'L' *> numP) <|> RotR <$> (char 'R' *> numP)
 
 rotsP :: Parser [Rot]
 rotsP = many (rotP <* newline)
 
+distance :: Rot -> Int
+distance (RotL n) = -n
+distance (RotR n) = n
+
+pattern Rot :: Int -> Rot
+pattern Rot n <- (distance -> n)
+
 
 dials :: [Rot] -> [ModInt 100]
 dials rs = scanl (flip ($)) (modInt 50) (map rot rs)
-  where
-    rot (RotL n) x = x - modInt n
-    rot (RotR n) x = x + modInt n
+  where rot (Rot n) x = x + modInt n
 
 password :: [Rot] -> Int
 password = length . filter (== modInt 0) . dials
 
 
 main :: IO ()
-main = interact $ \s -> case parse rotsP "" s of
-                          Left err -> show err
-                          Right rots -> show (password rots)  -- 1135
+main = app rotsP (print . password)  -- 1135
 
