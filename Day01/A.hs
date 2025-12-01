@@ -1,46 +1,13 @@
 {-# LANGUAGE DataKinds #-}
-{-# LANGUAGE TypeApplications #-}
 module Day01.A where
 
-import Data.Proxy
 import Text.Parsec
 import Text.Parsec.Char
-import GHC.TypeLits
-
-
-type Parser = Parsec String ()
-
-
-data ModInt n = MI !Int
-  deriving Eq
-
-instance KnownNat n => Show (ModInt n) where
-  show (MI x) = show x ++ " (mod " ++ show (natVal (Proxy @n)) ++ ")"
-
-smod :: Integral a => a -> a -> a
-smod x m = (x `mod` m + m) `mod` m
-
-modInt :: forall n. KnownNat n => Int -> ModInt n
-modInt x = MI (x `smod` fromInteger (natVal (Proxy @n)))
-
-toInt :: ModInt n -> Int
-toInt (MI x) = x
-
-instance KnownNat n => Num (ModInt n) where
-  MI x + MI y = modInt (x + y)
-  MI x - MI y = modInt (x - y)
-  MI x * MI y = modInt (x * y)
-  abs (MI x) = MI x
-  signum (MI 0) = 0
-  signum (MI _) = 1
-  fromInteger x = modInt (fromInteger x)
+import Utils (ModInt, modInt, toInt, Parser, numP)
 
 
 data Rot = RotL Int | RotR Int
   deriving Show
-
-numP :: Parser Int
-numP = read <$> many1 digit
 
 rotP :: Parser Rot
 rotP = (RotL <$> (char 'L' *> numP)) <|> (RotR <$> (char 'R' *> numP))
@@ -56,7 +23,7 @@ dials rs = scanl (flip ($)) (modInt 50) (map rot rs)
     rot (RotR n) x = x + modInt n
 
 password :: [Rot] -> Int
-password = length . filter (== fromInteger 0) . dials
+password = length . filter (== modInt 0) . dials
 
 
 main :: IO ()
