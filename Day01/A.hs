@@ -3,9 +3,7 @@
 {-# LANGUAGE ViewPatterns #-}
 module Day01.A where
 
-import Text.Parsec
-import Text.Parsec.Char
-import Utils
+import MyPrelude
 
 
 data Rot = RotL Int | RotR Int
