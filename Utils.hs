@@ -29,12 +29,13 @@ type family NonZero (n :: Nat) (s :: ErrorMessage) :: Constraint where
   NonZero 0 s = TypeError s
   NonZero _ s = ()
 
+type (a :: Constraint) && (b :: Constraint) = (a, b)
 
 data ModInt n = MI !Int
   deriving Eq
 
 type family Modulus (m :: Nat) :: Constraint where
-  Modulus m = NonZero m ('Text "Modulus cannot be zero.")
+  Modulus m = KnownNat m && NonZero m ('Text "Modulus cannot be zero.")
 
 instance KnownNat m => Show (ModInt m) where
   show (MI x) = show x ++ " (mod " ++ show (natVal (Proxy @m)) ++ ")"
@@ -42,7 +43,7 @@ instance KnownNat m => Show (ModInt m) where
 smod :: Integral a => a -> a -> a
 smod x m = (x `mod` m + m) `mod` m
 
-instance (KnownNat m, Modulus m) => Num (ModInt m) where
+instance Modulus m => Num (ModInt m) where
   MI x + MI y = modInt (x + y)
   MI x - MI y = modInt (x - y)
   MI x * MI y = modInt (x * y)
@@ -51,19 +52,19 @@ instance (KnownNat m, Modulus m) => Num (ModInt m) where
   signum (MI _) = 1
   fromInteger x = MI (fromInteger x `smod` fromInteger (natVal (Proxy @m)))
 
-instance (KnownNat m, Modulus m) => Ord (ModInt m) where
+instance Modulus m => Ord (ModInt m) where
   MI x <= MI y = x <= y
 
-instance (KnownNat m, Modulus m) => Real (ModInt m) where
+instance Modulus m => Real (ModInt m) where
   toRational (MI x) = toRational x
 
-modInt :: forall m. (KnownNat m, Modulus m) => Int -> ModInt m
+modInt :: forall m. Modulus m => Int -> ModInt m
 modInt x = MI (x `smod` fromInteger (natVal (Proxy @m)))
 
 toInt :: ModInt m -> Int
 toInt (MI x) = x
 
-instance (KnownNat m, Modulus m) => Enum (ModInt m) where
+instance Modulus m => Enum (ModInt m) where
   toEnum = modInt
   fromEnum = toInt
 
@@ -84,7 +85,7 @@ tot = go 1 . pf
                    | otherwise = (p * r - r) * go 1 (q:ps)
 
 
-instance (KnownNat m, Modulus m) => Integral (ModInt m) where
+instance Modulus m => Integral (ModInt m) where
   quotRem x y = (x * modinv y, modInt 0)
     where modinv x = x ^ (natVal (Proxy @m) - 2)
     -- where modinv x = x ^ (tot (fromInteger (natVal (Proxy @m))) - 1)
