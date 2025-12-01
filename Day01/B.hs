@@ -2,6 +2,7 @@
 {-# LANGUAGE TypeApplications #-}
 module Day01.B where
 
+import Control.Monad.State.Lazy
 import Data.Proxy
 import Text.Parsec
 import Text.Parsec.Char
@@ -49,18 +50,15 @@ rotsP :: Parser [Rot]
 rotsP = many (rotP <* newline)
 
 
-dials :: [Rot] -> [(ModInt 100, Int)]
-dials rs = scanl (flip ($)) (modInt 50, 0) (map rot rs)
+password :: [Rot] -> Int
+password rs = snd (execState (mapM (modify . uncurry . rot) rs) (modInt @100 50, 0))
   where
-    rot r@(RotL n) (x, _) = (x - modInt n, count (toInt x) r)
-    rot r@(RotR n) (x, _) = (x + modInt n, count (toInt x) r)
+    rot r@(RotL n) x p = (x - modInt n, p + count (toInt x) r)
+    rot r@(RotR n) x p = (x + modInt n, p + count (toInt x) r)
 
     count 0 (RotL n) = n `div` 100
     count x (RotL n) = (100 - x + n) `div` 100
     count x (RotR n) = (x + n) `div` 100
-
-password :: [Rot] -> Int
-password = sum . map snd . dials
 
 
 main :: IO ()
