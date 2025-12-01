@@ -31,6 +31,7 @@ type family NonZero (n :: Nat) (s :: ErrorMessage) :: Constraint where
 
 type (a :: Constraint) && (b :: Constraint) = (a, b)
 
+
 data ModInt n = MI !Int
   deriving Eq
 
