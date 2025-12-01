@@ -1,6 +1,6 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE TypeApplications #-}
-module Day01.A where
+module Day01.B where
 
 import Data.Proxy
 import Text.Parsec
@@ -49,18 +49,22 @@ rotsP :: Parser [Rot]
 rotsP = many (rotP <* newline)
 
 
-dials :: [Rot] -> [ModInt 100]
-dials rs = scanl (flip ($)) (modInt 50) (map rot rs)
+dials :: [Rot] -> [(ModInt 100, Int)]
+dials rs = scanl (flip ($)) (modInt 50, 0) (map rot rs)
   where
-    rot (RotL n) x = x - modInt n
-    rot (RotR n) x = x + modInt n
+    rot r@(RotL n) (x, _) = (x - modInt n, count (toInt x) r)
+    rot r@(RotR n) (x, _) = (x + modInt n, count (toInt x) r)
+
+    count 0 (RotL n) = n `div` 100
+    count x (RotL n) = (100 - x + n) `div` 100
+    count x (RotR n) = (x + n) `div` 100
 
 password :: [Rot] -> Int
-password = length . filter (== fromInteger 0) . dials
+password = sum . map snd . dials
 
 
 main :: IO ()
 main = interact $ \s -> case parse rotsP "" s of
                           Left err -> show err
-                          Right rots -> show (password rots)  -- 1135
+                          Right rots -> show (password rots)  -- 6558
 
