@@ -18,12 +18,12 @@ rotP = RotL <$> (char 'L' *> numP) <|> RotR <$> (char 'R' *> numP)
 rotsP :: Parser [Rot]
 rotsP = many (rotP <* newline)
 
-distance :: Rot -> Int
-distance (RotL n) = -n
-distance (RotR n) = n
+dist :: Rot -> Int
+dist (RotL n) = -n
+dist (RotR n) = n
 
 pattern Rot :: Int -> Rot
-pattern Rot n <- (distance -> n)
+pattern Rot n <- (dist -> n)
 
 
 password :: [Rot] -> Int
