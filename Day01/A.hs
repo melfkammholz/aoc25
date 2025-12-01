@@ -26,8 +26,7 @@ pattern Rot n <- (distance -> n)
 
 
 dials :: [Rot] -> [ModInt 100]
-dials rs = scanl (flip ($)) (modInt 50) (map rot rs)
-  where rot (Rot n) x = x + modInt n
+dials = scanl (\x (Rot n) -> x + modInt n) (modInt 50)
 
 password :: [Rot] -> Int
 password = length . filter (== modInt 0) . dials
