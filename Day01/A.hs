@@ -29,7 +29,7 @@ dials :: [Rot] -> [ModInt 100]
 dials = scanl (\x (Rot n) -> x + modInt n) (modInt 50)
 
 password :: [Rot] -> Int
-password = length . filter (== modInt 0) . dials
+password = length . filter (== 0) . dials
 
 
 main :: IO ()
