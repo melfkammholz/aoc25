@@ -25,11 +25,8 @@ pattern Rot :: Int -> Rot
 pattern Rot n <- (dist -> n)
 
 
-dials :: [Rot] -> [ModInt 100]
-dials = scanl (\x (Rot n) -> x + modInt n) (modInt 50)
-
 password :: [Rot] -> Int
-password = length . filter (== 0) . dials
+password = lengthOn (== 0) . scanl (\x (Rot n) -> x + modInt n) (modInt @100 50)
 
 
 main :: IO ()

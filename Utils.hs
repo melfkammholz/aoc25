@@ -3,10 +3,12 @@
 {-# LANGUAGE UndecidableInstances #-}
 module Utils (
          app,
+         lengthOn,
          ModInt, modInt, toInt,
          Parser, numP
        ) where
 
+import Data.List (foldl')
 import Data.Proxy
 import Data.Kind
 import GHC.TypeLits
@@ -18,6 +20,8 @@ app p f = do
   inp <- getContents
   either print f (parse p "<stdin>" inp)
 
+lengthOn :: (a -> Bool) -> [a] -> Int
+lengthOn p = foldl' (\l x -> l + if p x then 1 else 0) 0
 
 type Parser = Parsec String ()
 
