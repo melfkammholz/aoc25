@@ -41,14 +41,12 @@ type family NonZero (n :: Nat) (s :: ErrorMessage) :: Constraint where
   NonZero 0 s = TypeError s
   NonZero _ s = ()
 
-type (a :: Constraint) && (b :: Constraint) = (a, b)
-
 
 data ModInt n = MI !Int
   deriving Eq
 
 type family Modulus (m :: Nat) :: Constraint where
-  Modulus m = KnownNat m && NonZero m ('Text "Modulus cannot be zero.")
+  Modulus m = (KnownNat m, NonZero m ('Text "Modulus cannot be zero."))
 
 instance KnownNat m => Show (ModInt m) where
   show (MI x) = show x ++ " (mod " ++ show (natVal (Proxy @m)) ++ ")"
