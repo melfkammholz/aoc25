@@ -11,7 +11,7 @@ module MyPrelude (
 
          sepBy, char, newline,
 
-         ModInt, modInt, toInt,
+         ModInt, modInt, toInt, moddiv, modinv,
 
          zalg
        ) where
@@ -23,6 +23,8 @@ import Data.Kind
 import qualified Data.Array as Array
 import qualified Data.Sequence as Seq
 import Data.Sequence (Seq)
+import Data.Type.Bool
+import Data.Type.Equality
 import GHC.TypeLits
 import Text.Parsec hiding (many)
 import Text.Parsec.Char
@@ -33,8 +35,10 @@ app p f = do
   inp <- getContents
   either print f (parse p "<stdin>" inp)
 
+
 lengthOn :: (a -> Bool) -> [a] -> Int
 lengthOn p = foldl' (\l x -> l + if p x then 1 else 0) 0
+
 
 type Parser = Parsec String ()
 
@@ -45,6 +49,22 @@ numP = read <$> many1 digit
 type family NonZero (n :: Nat) (s :: ErrorMessage) :: Constraint where
   NonZero 0 s = TypeError s
   NonZero _ s = ()
+
+type family PrimeHelper (n :: Nat) (p :: Nat) :: Bool where
+  PrimeHelper n p =
+    If (CmpNat n (p GHC.TypeLits.* p) == LT)
+       'True
+       (PrimeHelperContinue (Mod n p == 0) n (p + 1))
+
+type family PrimeHelperContinue (b :: Bool) (n :: Nat) (p :: Nat) :: Bool where
+  PrimeHelperContinue 'True  n p = 'False
+  PrimeHelperContinue 'False n p = PrimeHelper n p
+
+type family Prime (n :: Nat) :: Constraint where
+  Prime n =
+    If (PrimeHelper n 2)
+       (() :: Constraint)
+       (TypeError ('Text "Modulus " ':<>: ShowType n ':<>: 'Text " is not prime"))
 
 
 data ModInt n = MI !Int
@@ -100,25 +120,30 @@ tot = go 1 . pf
     go !r (p:q:ps) | p == q    = go (p * r) (q:ps)
                    | otherwise = (p * r - r) * go 1 (q:ps)
 
-
-instance Modulus m => Integral (ModInt m) where
+instance (Modulus m, Prime m) => Integral (ModInt m) where
   quotRem x y = (x * modinv y, modInt 0)
     where modinv x = x ^ (natVal (Proxy @m) - 2)
-    -- where modinv x = x ^ (tot (fromInteger (natVal (Proxy @m))) - 1)
   toInteger (MI x) = toInteger x
+
+modinv :: forall m. Modulus m => ModInt m -> ModInt m
+modinv x = x ^ (tot (fromInteger (natVal (Proxy @m))) - 1)
+
+moddiv :: Modulus m => ModInt m -> ModInt m -> ModInt m
+moddiv x y = x * modinv y
 
 
 zalg :: String -> Seq Int
 zalg s = go 1 0 0 (Seq.singleton n)
   where
-    s' = Array.listArray (0, n - 1) s
     n = length s
+    s' = Array.listArray (0, n - 1) s
 
-    match i c
-      | i + c < n && s' Array.! c == s' Array.! (i + c) = 1 + match i (c + 1)
-      | otherwise                                       = 0
+    match i c = if ok then 1 + match i (c + 1) else 0
+      where ok = i + c < n && s' Array.! c == s' Array.! (i + c)
 
     go i _ _ z | i == n = z
-    go i l r z = let !zi = match i (if i < r then min (z `Seq.index` (i - l)) (r - i) else 0)
+    go i l r z = let c = if i < r then min (z `Seq.index` (i - l)) (r - i) else 0
+                     !zi = match i c
                      (l', r') = if i + zi > r then (i, i + zi) else (l, r)
                   in go (i + 1) l' r' (z Seq.|> zi)
+
