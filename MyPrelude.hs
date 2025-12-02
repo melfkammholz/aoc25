@@ -1,4 +1,5 @@
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE OverloadedLists #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 module MyPrelude (
@@ -13,7 +14,9 @@ module MyPrelude (
 
          ModInt, modInt, toInt, moddiv, modinv,
 
-         zalg
+         zalg,
+
+         Container(..)
        ) where
 
 import Control.Applicative
@@ -21,10 +24,13 @@ import Data.List (foldl')
 import Data.Proxy
 import Data.Kind
 import qualified Data.Array as Array
+import Data.Array (Array)
 import qualified Data.Sequence as Seq
 import Data.Sequence (Seq)
 import Data.Type.Bool
 import Data.Type.Equality
+import qualified GHC.IsList as IsList
+import GHC.IsList (fromList, toList)
 import GHC.TypeLits
 import Text.Parsec hiding (many)
 import Text.Parsec.Char
@@ -133,17 +139,54 @@ moddiv x y = x * modinv y
 
 
 zalg :: String -> Seq Int
-zalg s = go 1 0 0 (Seq.singleton n)
+zalg s = go 1 0 0 [n]
   where
     n = length s
-    s' = Array.listArray (0, n - 1) s
+    s' = fromList s :: Array Int Char
 
     match i c = if ok then 1 + match i (c + 1) else 0
-      where ok = i + c < n && s' Array.! c == s' Array.! (i + c)
+      where ok = i + c < n && s' ! c == s' ! (i + c)
 
     go i _ _ z | i == n = z
-    go i l r z = let c = if i < r then min (z `Seq.index` (i - l)) (r - i) else 0
+    go i l r z = let c = if i < r then min (z ! (i - l)) (r - i) else 0
                      !zi = match i c
                      (l', r') = if i + zi > r then (i, i + zi) else (l, r)
-                  in go (i + 1) l' r' (z Seq.|> zi)
+                  in go (i + 1) l' r' (z |> zi)
+
+
+class Container c where
+  type Item c
+  (!) :: c -> Int -> Item c
+  (<|) :: Item c -> c -> c
+  (|>) :: c -> Item c -> c
+  update :: Int -> Item c -> c -> c
+
+instance IsList.IsList (Array Int a) where
+  type Item (Array _ a) = a
+  toList = Array.elems
+  fromList xs = Array.listArray (0, length xs - 1) xs
+
+instance Container (Array Int a) where
+  type Item (Array _ a) = a
+  (!) = (Array.!)
+  x <| a = let (l, r) = Array.bounds a
+            in Array.listArray (l - 1, r) (x : Array.elems a)
+  a |> x = let (l, r) = Array.bounds a
+            in Array.listArray (l, r + 1) (Array.elems a ++ [x])
+  update k x a = a Array.// [(k, x)]
+
+instance Container [a] where
+  type Item [a] = a
+  (!) = (!!)
+  (<|) = (:)
+  xs |> x = xs ++ [x]
+  update 0 y (_ : xs) = y : xs
+  update k y (x : xs) = x : update (k - 1) y xs
+
+instance Container (Seq a) where
+  type Item (Seq a) = a
+  (!) = Seq.index
+  (<|) = (Seq.<|)
+  (|>) = (Seq.|>)
+  update = Seq.update
 
