@@ -3,6 +3,7 @@ module Day02.B where
 import MyPrelude
 import qualified Data.Sequence as Seq
 
+
 data Range = Range Int Int
   deriving Show
 
