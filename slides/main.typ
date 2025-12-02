@@ -25,6 +25,7 @@
   == Advent of Code 2025
 ]
 
+
 == Tag 1
 
 #align(center)[
@@ -48,6 +49,7 @@
   ```
 ]
 
+
 == ModInt
 
 #align(center)[
@@ -56,7 +58,7 @@
     deriving Eq
 
   type family Modulus (m :: Nat) :: Constraint where
-    Modulus m = 
+    Modulus m =
       (KnownNat m, NonZero m ('Text "Modulus cannot be zero."))
 
   modInt :: forall m. Modulus m => Int -> ModInt m
@@ -73,32 +75,44 @@
   ```
 ]
 
+
 == Tag 2
 
 Ein Wort $w in Sigma^*$ ist genau dann eine Wiederholung, wenn ein
 $i in { 2, 3, ..., abs(w) }$ existiert, sodass
-$ i - 1 + "LCP"_i (w) = abs(w) and gcd(i - 1, "LCP"_i (w)) = i - 1. $
+$ i - 1 + "LCP"_i (w) = abs(w) and gcd(i - 1, "LCP"_i (w)) = i - 1, $
+wobei $"LCP"_i (w) = max { k in {i, i + 1, ..., abs(w)} | w[i..k] in "Pref"(w) }$
+ist.
+
+_Beispiel_
+$
+w = upright("10101") ~> "LCP"(w) = mat(5, 0, 3, 0, 1) ~> "ohne ggT" i in {3, 5} \
+w = upright("101101") ~> "LCP"(w) = mat(6, 0, 1, 3, 0, 1) ~> i in {4}
+$
+
+
+== Implementierung
 
 #text(1.1em, align(center)[
-
   ```hs
   isRep :: String -> Bool
   isRep w =
     let n = length w
         lcp = zalg w
-     in Seq.foldrWithIndex 
-          (\i lcpi b -> b || i + lcpi == n && gcd i lcpi == i) 
-          False 
+     in Seq.foldrWithIndex
+          (\i lcpi b -> b || i + lcpi == n && gcd i lcpi == i)
+          False
           lcp
   ```
 ])
+
 
 == Nutze $"LCP"_k (w), k < i$ für $"LCP"_i (w)$
 
 #align(center)[
   #cetz.canvas({
     import cetz.draw: *
-    
+
     rect((8, 0), (15, -1.5), stroke: green.darken(25%), fill: green.lighten(50%), name: "abox1")
     content("abox1", [$alpha$])
 
@@ -107,7 +121,7 @@ $ i - 1 + "LCP"_i (w) = abs(w) and gcd(i - 1, "LCP"_i (w)) = i - 1. $
 
     rect((0, -2.25), (7, -3.75), stroke: green.darken(25%), fill: green.lighten(50%), name: "abox2")
     content("abox2", [$alpha$])
-    
+
     rect((5, -0.75), (7, -2.25), stroke: red.darken(25%), fill: red.lighten(50%), name: "bbox2")
     content("bbox2", [$beta$])
 
@@ -130,11 +144,13 @@ $ i - 1 + "LCP"_i (w) = abs(w) and gcd(i - 1, "LCP"_i (w)) = i - 1. $
   })
 ]
 
+
 #text(0.9em)[
   $"LCP"_(i-l+1)(w)$ ist bereits berechnet, kann aber länger als $abs(beta)$.
-  Danach können verschiedene Buchstaben folgen 
+  Danach können verschiedene Buchstaben folgen
   $=> "LCP"_i (w) >= min("LCP"_(i-l+1)(w), abs(beta))$ mit anschließenden expliziten matching.
 ]
+
 
 == Z-Algorithmus
 
@@ -159,3 +175,4 @@ Berechnung der längsten gemeinsamen Präfixe der Suffixe eines Wortes.
          in go (i + 1) l' r' (z Seq.|> zi)
   ```
 ]
+
