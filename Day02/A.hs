@@ -22,5 +22,5 @@ silly (Range a b) = filter invalid [a..b]
 
 
 main :: IO ()
-main = app rangesP (print . sum . concatMap silly)
+main = app rangesP (print . sum . concatMap silly)  -- 35367539282
 
