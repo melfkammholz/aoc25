@@ -105,3 +105,6 @@ $RECYCLE.BIN/
 Day[0-9][0-9]/A
 Day[0-9][0-9]/B
 
+slides/fonts
+slides/main.pdf
+
