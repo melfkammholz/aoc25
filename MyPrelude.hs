@@ -7,17 +7,22 @@ module MyPrelude (
 
          module Control.Applicative,
 
-         ModInt, modInt, toInt,
-
          Parser, numP,
 
-         char, newline
+         sepBy, char, newline,
+
+         ModInt, modInt, toInt,
+
+         zalg
        ) where
 
 import Control.Applicative
 import Data.List (foldl')
 import Data.Proxy
 import Data.Kind
+import qualified Data.Array as Array
+import qualified Data.Sequence as Seq
+import Data.Sequence (Seq)
 import GHC.TypeLits
 import Text.Parsec hiding (many)
 import Text.Parsec.Char
@@ -102,3 +107,18 @@ instance Modulus m => Integral (ModInt m) where
     -- where modinv x = x ^ (tot (fromInteger (natVal (Proxy @m))) - 1)
   toInteger (MI x) = toInteger x
 
+
+zalg :: String -> Seq Int
+zalg s = go 1 0 0 (Seq.singleton n)
+  where
+    s' = Array.listArray (0, n - 1) s
+    n = length s
+
+    match i c
+      | i + c < n && s' Array.! c == s' Array.! (i + c) = 1 + match i (c + 1)
+      | otherwise                                       = 0
+
+    go i _ _ z | i == n = z
+    go i l r z = let !zi = match i (if i < r then min (z `Seq.index` (i - l)) (r - i) else 0)
+                     (l', r') = if i + zi > r then (i, i + zi) else (l, r)
+                  in go (i + 1) l' r' (z Seq.|> zi)
