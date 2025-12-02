@@ -164,15 +164,14 @@ Berechnung der längsten gemeinsamen Präfixe der Suffixe eines Wortes.
       n = length s
       s' = Array.listArray (0, n - 1) s
 
-      match i c = if ok then 1 + match i (c + 1) else 0
-        where ok = i + c < n && s' Array.! c == s' Array.! (i + c)
-
       go i _ _ z | i == n = z
-      go i l r z =
-        let c = if i < r then min (z `Seq.index` (i - l)) (r - i) else 0
-            !zi = match i c
-            (l', r') = if i + zi > r then (i, i + zi) else (l, r)
-         in go (i + 1) l' r' (z Seq.|> zi)
+      go i l r z = go (i + 1) l' r' (z Seq.|> zi)
+        where
+          c = if i < r then min (z `Seq.index` (i - l)) (r - i) else 0
+          zi = match c
+          match j = if ok then 1 + match (j + 1) else 0
+            where ok = i + j < n && s' Array.! j == s' Array.! (i + j)
+          (l', r') = if i + zi > r then (i, i + zi) else (l, r)
   ```
 ]
 
