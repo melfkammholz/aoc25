@@ -31,6 +31,8 @@ as challenges, that I would like to look into and use, even if they obfuscate my
 code. After all, it is all about having fun.
 
 - Implement some purely functional data structures ([Okasaki](https://www.cs.cmu.edu/~rwh/students/okasaki.pdf))
+- Look at [Finger trees: a simple general-purpose data structure](https://www.staff.city.ac.uk/~ross/papers/FingerTree.html)
+  and implement own `Seq` type
 - If graph algorithms come up, look at [Structuring depth-first search algorithms in Haskell](https://dl.acm.org/doi/10.1145/199448.199530)
 - Use type-level parameters at runtime
 - Use [GHC language extensions](https://ghc.gitlab.haskell.org/ghc/doc/users_guide/exts.html)
