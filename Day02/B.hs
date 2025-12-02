@@ -13,13 +13,14 @@ rangesP :: Parser [Range]
 rangesP = (rangeP `sepBy` char ',') <* newline
 
 
-rep :: String -> Bool
-rep s = let n = length s
-            z = zalg s
-         in Seq.foldrWithIndex (\i zi b -> b || i + zi == n && gcd i zi == i) False z
+isRep :: String -> Bool
+isRep s =
+  let n = length s
+      z = zalg s
+   in Seq.foldrWithIndex (\i zi b -> b || i + zi == n && gcd i zi == i) False z
 
 silly :: Range -> [Int]
-silly (Range a b) = filter (rep . show) [a..b]
+silly (Range a b) = filter (isRep . show) [a..b]
 
 
 main :: IO ()

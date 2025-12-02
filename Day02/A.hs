@@ -3,6 +3,7 @@ module Day02.A where
 import MyPrelude
 import Data.List (inits, tails)
 
+
 data Range = Range Int Int
   deriving Show
 
