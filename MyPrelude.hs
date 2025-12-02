@@ -32,14 +32,24 @@ import Data.Type.Equality
 import qualified GHC.IsList as IsList
 import GHC.IsList (fromList, toList)
 import GHC.TypeLits
+import System.CPUTime
 import Text.Parsec hiding (many)
 import Text.Parsec.Char
+import Text.Printf
 
 
 app :: Parser a -> (a -> IO ()) -> IO ()
 app p f = do
   inp <- getContents
-  either print f (parse p "<stdin>" inp)
+  either print (time . f) (parse p "<stdin>" inp)
+
+time :: IO a -> IO a
+time act = do
+  t1 <- getCPUTime
+  !x <- act
+  t2 <- getCPUTime
+  printf "%.3fs\n" (fromIntegral (t2 - t1) / (10 ^ 12) :: Double)
+  return x
 
 
 lengthOn :: (a -> Bool) -> [a] -> Int
@@ -155,19 +165,21 @@ zalg s = go 1 0 0 [n]
 
 
 class Container c where
+  type Index c
   type Item c
-  (!) :: c -> Int -> Item c
+  (!) :: c -> Index c -> Item c
   (<|) :: Item c -> c -> c
   (|>) :: c -> Item c -> c
-  update :: Int -> Item c -> c -> c
+  update :: Index c -> Item c -> c -> c
 
-instance IsList.IsList (Array Int a) where
-  type Item (Array _ a) = a
+instance IsList.IsList (Array Int e) where
+  type Item (Array _ e) = e
   toList = Array.elems
   fromList xs = Array.listArray (0, length xs - 1) xs
 
-instance Container (Array Int a) where
-  type Item (Array _ a) = a
+instance Container (Array Int e) where
+  type Index (Array _ _) = Int
+  type Item (Array _ e) = e
   (!) = (Array.!)
   x <| a = let (l, r) = Array.bounds a
             in Array.listArray (l - 1, r) (x : Array.elems a)
@@ -176,6 +188,7 @@ instance Container (Array Int a) where
   update k x a = a Array.// [(k, x)]
 
 instance Container [a] where
+  type Index _ = Int
   type Item [a] = a
   (!) = (!!)
   (<|) = (:)
@@ -184,6 +197,7 @@ instance Container [a] where
   update k y (x : xs) = x : update (k - 1) y xs
 
 instance Container (Seq a) where
+  type Index _ = Int
   type Item (Seq a) = a
   (!) = Seq.index
   (<|) = (Seq.<|)
