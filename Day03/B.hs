@@ -18,7 +18,7 @@ joltage :: Bank -> Int
 joltage (Bank a) = table ! (n - 1, 12)
   where
     n = length a
-    table = listArray ((0, 1), (n - 1, n)) [go i j | i <- [0..n- 1], j <- [1..n]]
+    table = listArray ((0, 1), (n - 1, n)) [go i j | i <- [0..n - 1], j <- [1..n]]
 
     go 0 1              = a ! 0
     go i 1              = max (table ! (i - 1, 1)) (a ! i)
