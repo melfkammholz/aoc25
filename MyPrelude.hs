@@ -157,14 +157,14 @@ zalg s = go 1 0 0 [n]
     n = length s
     s' = fromList s :: Array Int Char
 
-    match i c = if ok then 1 + match i (c + 1) else 0
-      where ok = i + c < n && s' ! c == s' ! (i + c)
-
     go i _ _ z | i == n = z
-    go i l r z = let c = if i < r then min (z ! (i - l)) (r - i) else 0
-                     !zi = match i c
-                     (l', r') = if i + zi > r then (i, i + zi) else (l, r)
-                  in go (i + 1) l' r' (z |> zi)
+    go i l r z          = go (i + 1) l' r' (z |> zi)
+      where
+        c = if i < r then min (z ! (i - l)) (r - i) else 0
+        !zi = match c
+        match j = if ok then 1 + match (j + 1) else 0
+          where ok = i + j < n && s' ! j == s' ! (i + j)
+        (l', r') = if i + zi > r then (i, i + zi) else (l, r)
 
 
 class Container c where

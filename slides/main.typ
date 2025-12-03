@@ -159,18 +159,18 @@ Berechnung der längsten gemeinsamen Präfixe der Suffixe eines Wortes.
 #text(0.79em, align(center + horizon)[
 ```hs
   zalg :: String -> Seq Int
-  zalg s = go 1 0 0 (Seq.singleton n)
+  zalg s = go 1 0 0 [n]
     where
       n = length s
-      s' = Array.listArray (0, n - 1) s
+      s' = fromList s :: Array Int Int
 
       go i _ _ z | i == n = z
-      go i l r z = go (i + 1) l' r' (z Seq.|> zi)
+      go i l r z = go (i + 1) l' r' (z |> zi)
         where
-          c = if i < r then min (z `Seq.index` (i - l)) (r - i) else 0
+          c = if i < r then min (z ! (i - l)) (r - i) else 0
           zi = match c
           match j = if ok then 1 + match (j + 1) else 0
-            where ok = i + j < n && s' Array.! j == s' Array.! (i + j)
+            where ok = i + j < n && s' ! j == s' ! (i + j)
           (l', r') = if i + zi > r then (i, i + zi) else (l, r)
   ```
 ])
