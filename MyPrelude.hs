@@ -10,13 +10,15 @@ module MyPrelude (
 
          Parser, numP,
 
-         sepBy, char, newline,
+         sepBy, char, digit, newline,
 
          ModInt, modInt, toInt, moddiv, modinv,
 
          zalg,
 
-         Container(..)
+         Container(..),
+         Array, Array.listArray,
+         fromList, toList
        ) where
 
 import Control.Applicative
@@ -25,6 +27,7 @@ import Data.Proxy
 import Data.Kind
 import qualified Data.Array as Array
 import Data.Array (Array)
+import qualified Data.List as List
 import qualified Data.Sequence as Seq
 import Data.Sequence (Seq)
 import Data.Type.Bool
@@ -167,10 +170,16 @@ zalg s = go 1 0 0 [n]
 class Container c where
   type Index c
   type Item c
+  -- empty :: c
+  singleton :: Item c -> c
   (!) :: c -> Index c -> Item c
   (<|) :: Item c -> c -> c
   (|>) :: c -> Item c -> c
   update :: Index c -> Item c -> c -> c
+  -- (!?) :: c -> Index c -> Maybe (Item c)
+  -- adjust :: Index c -> (Item c -> Item c) -> c -> c
+  insert :: Index c -> Item c -> c -> c
+  -- delete :: Index c -> c -> c
 
 instance IsList.IsList (Array Int e) where
   type Item (Array _ e) = e
@@ -178,29 +187,54 @@ instance IsList.IsList (Array Int e) where
   fromList xs = Array.listArray (0, length xs - 1) xs
 
 instance Container (Array Int e) where
-  type Index (Array _ _) = Int
+  type Index _ = Int
   type Item (Array _ e) = e
+  -- empty = error "not possible"
+  singleton x = Array.listArray (0, 0) [x]
   (!) = (Array.!)
   x <| a = let (l, r) = Array.bounds a
             in Array.listArray (l - 1, r) (x : Array.elems a)
   a |> x = let (l, r) = Array.bounds a
             in Array.listArray (l, r + 1) (Array.elems a ++ [x])
   update k x a = a Array.// [(k, x)]
+  insert k x a = let (l, r) = Array.bounds a
+                     (xs, ys) = splitAt k (Array.elems a)
+                  in Array.listArray (l, r + 1) (xs ++ [x] ++ ys)
+
+instance {-# OVERLAPPABLE #-} Array.Ix i => Container (Array i e) where
+  type Index (Array i _) = i
+  type Item (Array _ e) = e
+
+  singleton = undefined
+  (<|) = undefined
+  (|>) = undefined
+  insert = undefined
+
+  (!) = (Array.!)
+  update k x a = a Array.// [(k, x)]
 
 instance Container [a] where
   type Index _ = Int
   type Item [a] = a
+  -- empty = []
+  singleton x = [x]
   (!) = (!!)
   (<|) = (:)
   xs |> x = xs ++ [x]
   update 0 y (_ : xs) = y : xs
   update k y (x : xs) = x : update (k - 1) y xs
+  insert 0 y xs = y : xs
+  insert _ _ [] = error "empty list"
+  insert k y (x : xs) = x : insert (k - 1) y xs
 
 instance Container (Seq a) where
   type Index _ = Int
   type Item (Seq a) = a
+  -- empty = []
+  singleton x = [x]
   (!) = Seq.index
   (<|) = (Seq.<|)
   (|>) = (Seq.|>)
   update = Seq.update
+  insert = Seq.insertAt
 
