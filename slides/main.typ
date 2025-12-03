@@ -8,11 +8,11 @@
   header: none,
   config-methods(
     init: (self: none, body) => {
-      set text(lang: "de", fill: self.colors.neutral-darkest, size: 25pt)
+      set text(lang: "de", fill: self.colors.neutral-darkest, size: 24pt)
       show footnote.entry: set text(size: .6em)
       show strong: self.methods.alert.with(self: self)
       show heading.where(level: self.slide-level + 1): set text(1.4em)
-      show raw: set text(font: "CaskaydiaCove NF", 0.67em)
+      show raw: set text(font: "CaskaydiaCove NF", 1em)
 
       body
     },
@@ -26,9 +26,9 @@
 ]
 
 
-== Tag 1
+== Tag 1 (Drehknopf-Klicks eines Safes)
 
-#align(center)[
+#text(0.8em, align(center + horizon)[
   ```hs
   data Rot = RotL Int | RotR Int
     deriving Show
@@ -47,12 +47,12 @@
 
   -- scanl f x0 [x1, x2, ...] = x0 : f x0 x1 : f (f x0 x1) x2 : ...
   ```
-]
+])
 
 
 == ModInt
 
-#align(center)[
+#text(0.71em, align(center + horizon)[
   ```hs
   data ModInt n = MI !Int
     deriving Eq
@@ -73,10 +73,10 @@
     MI x * MI y = modInt (x * y)
     -- ...
   ```
-]
+])
 
 
-== Tag 2
+== Tag 2 (Lustige Produkt-IDs mit Wiederholungen)
 
 Ein Wort $w in Sigma^*$ ist genau dann eine Wiederholung, wenn ein
 $i in { 2, 3, ..., abs(w) }$ existiert, sodass
@@ -93,7 +93,7 @@ $
 
 == Implementierung
 
-#text(1.1em, align(center)[
+#align(center + horizon)[
   ```hs
   isRep :: String -> Bool
   isRep w =
@@ -104,7 +104,7 @@ $
           False
           lcp
   ```
-])
+]
 
 
 == Nutze $"LCP"_k (w), k < i$ für $"LCP"_i (w)$
@@ -156,7 +156,7 @@ $
 
 Berechnung der längsten gemeinsamen Präfixe der Suffixe eines Wortes.
 
-#align(center)[
+#text(0.79em, align(center + horizon)[
 ```hs
   zalg :: String -> Seq Int
   zalg s = go 1 0 0 (Seq.singleton n)
@@ -173,5 +173,29 @@ Berechnung der längsten gemeinsamen Präfixe der Suffixe eines Wortes.
             where ok = i + j < n && s' Array.! j == s' Array.! (i + j)
           (l', r') = if i + zi > r then (i, i + zi) else (l, r)
   ```
-]
+])
+
+== Tag 3 (Batteriebank)
+
+Finde $i in {1, ..., abs(a)}^12$ so, dass $i_k < i_(k + 1)$
+und $sum_(k=1)^12 10^(12 - k) a_(i_k)$ maximal ist.
+
+#text(0.75em, align(center)[
+  ```hs
+  joltage :: Bank -> Int
+  joltage (Bank a) = table ! (n - 1, 12)
+    where
+      n = length a
+      table = listArray ((0, 1), (n - 1, 12)) [go i j | i <- [0..n - 1], j <- [1..12]]
+
+      go 0 1              = a ! 0
+      go i 1              = max (table ! (i - 1, 1)) (a ! i)
+      go i k | i == k - 1 = table ! (i - 1, k - 1) * 10 + a ! i
+      go i k              = max (table ! (i - 1, k)) (table ! (i - 1, k - 1) * 10 + a ! i)
+  ```
+])
+
+Ist mir aufgefallen, dass man das Problem greedy lösen kann? Nö. Wollte ich
+ein DP sehen und es mithilfe eines DP lösen? Ja.
+#emoji.cocktail.tropical #h(-.6em) #emoji.face.cool
 
