@@ -7,7 +7,9 @@ library
     array,
     base,
     containers,
-    parsec >= 3.1.18
+    extra,
+    parsec >= 3.1.18,
+    unordered-containers
   hs-source-dirs: .
   default-language: GHC2021
   default-extensions:

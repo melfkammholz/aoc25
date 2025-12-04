@@ -4,7 +4,7 @@
 {-# LANGUAGE UndecidableInstances #-}
 module MyPrelude (
          app,
-         lengthOn, foldl',
+         cartesian, lengthOn, foldl',
 
          module Control.Applicative,
 
@@ -18,7 +18,9 @@ module MyPrelude (
 
          Container(..),
          Array, Array.listArray,
-         fromList, toList
+         fromList, toList,
+
+         BoolAlgebra(..)
        ) where
 
 import Control.Applicative
@@ -58,6 +60,8 @@ time act = do
 lengthOn :: (a -> Bool) -> [a] -> Int
 lengthOn p = foldl' (\l x -> l + if p x then 1 else 0) 0
 
+cartesian :: [a] -> [b] -> [(a, b)]
+cartesian xs ys = (,) <$> xs <*> ys
 
 type Parser = Parsec String ()
 
@@ -238,3 +242,20 @@ instance Container (Seq a) where
   update = Seq.update
   insert = Seq.insertAt
 
+
+infixr 3 .&&
+infixr 2 .||
+
+class BoolAlgebra a where
+  (.&&), (.||) :: a -> a -> a
+  neg :: a -> a
+
+instance BoolAlgebra Bool where
+  a .&& b = a && b
+  a .|| b = a || b
+  neg a = not a
+
+instance BoolAlgebra b => BoolAlgebra (a -> b) where
+  p .&& q = \x -> p x .&& q x
+  p .|| q = \x -> p x .|| q x
+  neg p = \x -> neg (p x)
