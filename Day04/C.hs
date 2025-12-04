@@ -2,8 +2,6 @@
 module Day04.C where
 
 import MyPrelude
-import Data.HashSet (HashSet)
-import qualified Data.HashSet as HashSet
 
 
 newtype Grid = Grid (HashSet (Int, Int))

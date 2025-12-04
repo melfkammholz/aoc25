@@ -19,6 +19,7 @@ module MyPrelude (
          Container(..),
          UnorderedContainer(..),
          Array, Array.listArray,
+         HashSet,
          fromList, toList,
 
          BoolAlgebra(..),
