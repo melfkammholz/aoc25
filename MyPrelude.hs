@@ -20,7 +20,10 @@ module MyPrelude (
          Array, Array.listArray,
          fromList, toList,
 
-         BoolAlgebra(..)
+         BoolAlgebra(..),
+
+         Graph, Graph.graphFromEdges, Graph.indegree,
+         deleteVertices
        ) where
 
 import Control.Applicative
@@ -32,6 +35,10 @@ import Data.Array (Array)
 import qualified Data.List as List
 import qualified Data.Sequence as Seq
 import Data.Sequence (Seq)
+import Data.HashSet (HashSet)
+import qualified Data.HashSet as HashSet
+import Data.Graph (Graph)
+import qualified Data.Graph as Graph
 import Data.Type.Bool
 import Data.Type.Equality
 import qualified GHC.IsList as IsList
@@ -170,7 +177,6 @@ zalg s = go 1 0 0 [n]
           where ok = i + j < n && s' ! j == s' ! (i + j)
         (l', r') = if i + zi > r then (i, i + zi) else (l, r)
 
-
 class Container c where
   type Index c
   type Item c
@@ -259,3 +265,19 @@ instance BoolAlgebra b => BoolAlgebra (a -> b) where
   p .&& q = \x -> p x .&& q x
   p .|| q = \x -> p x .|| q x
   neg p = \x -> neg (p x)
+
+
+deleteVertices :: HashSet Graph.Vertex -> Graph -> Graph
+deleteVertices vs g =
+  let bs@(m, n) = Array.bounds g
+      rem = filter (\v -> not (HashSet.member v vs))
+      vs' = rem (Array.indices g)
+      ixs = Array.array bs (zip vs' [m..])
+      g' = Array.array (m, n - length vs)
+                       [(ixs ! v, fmap (ixs !) (rem ws)) | (v, ws) <- Array.assocs g
+                                                         , not (HashSet.member v vs)
+                                                         ]
+   in g'
+
+
+
