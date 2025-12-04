@@ -215,8 +215,8 @@ alle Knoten deren Ausgangsgrad kleiner als 4 ist. In Haskell mit
 ```hs Graph``` (Adjazenzlisten) aus ```hs Data.Graph```.
 
 ```hs
-access :: Grid -> Int
-access (Grid g) = m + if m > 0 then access (Grid g') else 0
+access :: Graph -> Int
+access g = m + if m > 0 then access g' else 0
   where
     vs = fmap (< 4) (indegree g)
     m = lengthOn id vs

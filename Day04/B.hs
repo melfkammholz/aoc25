@@ -1,38 +1,38 @@
 module Day04.B where
 
 import MyPrelude
-import Data.Array (Array, indices)
+import Data.Array (bounds)
 
 
-newtype Grid = Grid Graph
+newtype Grid = Grid (Array (Int, Int) Char)
   deriving Show
 
 gridP :: Parser Grid
 gridP = do
   g <- some (some (oneOf ".@") <* newline)
+  let (m, n) = (length g, length (g ! 0))
+  return (Grid (listArray ((0, 0), (m - 1, n - 1)) (concat g)))
 
-  let (m, n) = (length g - 1, length (g ! 0) - 1)
-      s = listArray ((0, 0), (m, n)) (concat g)
-
+toGraph :: Grid -> Graph
+toGraph (Grid g) =
+  let (_, (m, n)) = bounds g
       adj p@(y, x) =
         [y' * (n + 1) + x' | (dy, dx) <- [-1..1] `cartesian` [-1..1]
                            , let p'@(y', x') = (y + dy, x + dx)
                            , 0 <= y' && y' <= m && 0 <= x' && x' <= n
                            , p' /= p
-                           , s ! p' == '@'
+                           , g ! p' == '@'
                            ]
-
       (gr, _, _) =
         graphFromEdges
           [((), y * (n + 1) + x, adj p) | p@(y, x) <- [0..m] `cartesian` [0..n]
-                                        , s ! p == '@'
+                                        , g ! p == '@'
                                         ]
+   in gr
 
-  return (Grid gr)
 
-
-access :: Grid -> Int
-access (Grid g) = m + if m > 0 then access (Grid g') else 0
+access :: Graph -> Int
+access g = m + if m > 0 then access g' else 0
   where
     vs = fmap (< 4) (indegree g)
     m = lengthOn id vs
@@ -40,4 +40,4 @@ access (Grid g) = m + if m > 0 then access (Grid g') else 0
 
 
 main :: IO ()
-main = app gridP (print . access)  -- 8317
+main = app gridP (print . access . toGraph)  -- 8317
