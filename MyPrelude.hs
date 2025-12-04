@@ -17,6 +17,7 @@ module MyPrelude (
          zalg,
 
          Container(..),
+         UnorderedContainer(..),
          Array, Array.listArray,
          fromList, toList,
 
@@ -36,6 +37,7 @@ import Data.Array (Array)
 import qualified Data.List as List
 import qualified Data.Sequence as Seq
 import Data.Sequence (Seq)
+import Data.Hashable (Hashable)
 import Data.HashSet (HashSet)
 import qualified Data.HashSet as HashSet
 import Data.Graph (Graph)
@@ -178,18 +180,19 @@ zalg s = go 1 0 0 [n]
           where ok = i + j < n && s' ! j == s' ! (i + j)
         (l', r') = if i + zi > r then (i, i + zi) else (l, r)
 
+
 class Container c where
-  type Index c
-  type Item c
+  type CIndex c
+  type CItem c
   -- empty :: c
-  singleton :: Item c -> c
-  (!) :: c -> Index c -> Item c
-  (<|) :: Item c -> c -> c
-  (|>) :: c -> Item c -> c
-  update :: Index c -> Item c -> c -> c
+  singleton :: CItem c -> c
+  (!) :: c -> CIndex c -> CItem c
+  (<|) :: CItem c -> c -> c
+  (|>) :: c -> CItem c -> c
+  updateAt :: CIndex c -> CItem c -> c -> c
   -- (!?) :: c -> Index c -> Maybe (Item c)
   -- adjust :: Index c -> (Item c -> Item c) -> c -> c
-  insert :: Index c -> Item c -> c -> c
+  insertAt :: CIndex c -> CItem c -> c -> c
   -- delete :: Index c -> c -> c
 
 instance IsList.IsList (Array Int e) where
@@ -198,8 +201,8 @@ instance IsList.IsList (Array Int e) where
   fromList xs = Array.listArray (0, length xs - 1) xs
 
 instance Container (Array Int e) where
-  type Index _ = Int
-  type Item (Array _ e) = e
+  type CIndex _ = Int
+  type CItem (Array _ e) = e
   -- empty = error "not possible"
   singleton x = Array.listArray (0, 0) [x]
   (!) = (Array.!)
@@ -207,53 +210,90 @@ instance Container (Array Int e) where
             in Array.listArray (l - 1, r) (x : Array.elems a)
   a |> x = let (l, r) = Array.bounds a
             in Array.listArray (l, r + 1) (Array.elems a ++ [x])
-  update k x a = a Array.// [(k, x)]
-  insert k x a = let (l, r) = Array.bounds a
-                     (xs, ys) = splitAt k (Array.elems a)
-                  in Array.listArray (l, r + 1) (xs ++ [x] ++ ys)
+  updateAt k x a = a Array.// [(k, x)]
+  insertAt k x a = let (l, r) = Array.bounds a
+                       (xs, ys) = splitAt k (Array.elems a)
+                    in Array.listArray (l, r + 1) (xs ++ [x] ++ ys)
 
 instance {-# OVERLAPPABLE #-} Array.Ix i => Container (Array i e) where
-  type Index (Array i _) = i
-  type Item (Array _ e) = e
+  type CIndex (Array i _) = i
+  type CItem (Array _ e) = e
 
   singleton = undefined
   (<|) = undefined
   (|>) = undefined
-  insert = undefined
+  insertAt = undefined
 
   (!) = (Array.!)
-  update k x a = a Array.// [(k, x)]
+  updateAt k x a = a Array.// [(k, x)]
 
 instance Container [a] where
-  type Index _ = Int
-  type Item [a] = a
+  type CIndex _ = Int
+  type CItem [a] = a
   -- empty = []
   singleton x = [x]
   (!) = (!!)
   (<|) = (:)
   xs |> x = xs ++ [x]
-  update 0 y (_ : xs) = y : xs
-  update k y (x : xs) = x : update (k - 1) y xs
-  insert 0 y xs = y : xs
-  insert _ _ [] = error "empty list"
-  insert k y (x : xs) = x : insert (k - 1) y xs
+  updateAt 0 y (_ : xs) = y : xs
+  updateAt k y (x : xs) = x : updateAt (k - 1) y xs
+  insertAt 0 y xs = y : xs
+  insertAt _ _ [] = error "empty list"
+  insertAt k y (x : xs) = x : insertAt (k - 1) y xs
 
 instance Container (Seq a) where
-  type Index _ = Int
-  type Item (Seq a) = a
+  type CIndex _ = Int
+  type CItem (Seq a) = a
   -- empty = []
   singleton x = [x]
   (!) = Seq.index
   (<|) = (Seq.<|)
   (|>) = (Seq.|>)
-  update = Seq.update
-  insert = Seq.insertAt
+  updateAt = Seq.update
+  insertAt = Seq.insertAt
 
 
--- class UnorderedCollection c where
---   type Item c
---   elem :: Item c -> c -> Bool
---   size :: c -> Int
+class UnorderedContainer c where
+  type UCItem c
+  isElem :: UCItem c -> c -> Bool
+  size :: c -> Int
+  insert :: UCItem c -> c -> c
+  delete :: UCItem c -> c -> c
+
+instance Eq a => UnorderedContainer [a] where
+  type UCItem [a] = a
+  isElem = elem
+  size = Prelude.length
+  insert = (:)
+  delete = List.delete
+
+instance Eq e => UnorderedContainer (Array Int e) where
+  type UCItem (Array _ e) = e
+  isElem = elem
+  size = length
+  insert = (<|)
+  delete x a = let (m, n) = Array.bounds a
+                   (xs, ys) = span (/= x) (Array.elems a)
+                in case ys of
+                     []       -> a
+                     (_ : zs) -> Array.listArray (m, n - 1) (xs ++ zs)
+
+instance (Ord a, Hashable a) => UnorderedContainer (HashSet a) where
+  type UCItem (HashSet a) = a
+  isElem = HashSet.member
+  size = HashSet.size
+  insert = HashSet.insert
+  delete = HashSet.delete
+
+instance Eq a => UnorderedContainer (Seq a) where
+  type UCItem (Seq a) = a
+  isElem = elem
+  size = Seq.length
+  insert = (Seq.<|)
+  delete x s = case Seq.findIndexL (== x) s of
+                 Nothing -> s
+                 Just i  ->  Seq.deleteAt i s
+
 
 infixr 3 .&&
 infixr 2 .||

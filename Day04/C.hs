@@ -19,16 +19,16 @@ gridP = do
 
 
 access :: Grid -> Int
-access (Grid g) = go (toList g) g [] [] 0
+access (Grid g) = go (toList g) g [] ([] :: HashSet (Int, Int)) 0
   where
     go []      _ d [] !r = r
-    go []      s d u  !r = go (toList (foldr HashSet.delete u d))
-                              (foldr HashSet.delete s d)
+    go []      s d u  !r = go (toList (foldr delete u d))
+                              (foldr delete s d)
                               []
                               []
                               (length d + r)
     go (p : q) s d u  !r
-      | length ps < 4 = go q s (p : d) (foldr HashSet.insert u ps) r
+      | length ps < 4 = go q s (p : d) (foldr insert u ps) r
       | otherwise     = go q s d u r
       where ps = adj p s
 
@@ -36,7 +36,7 @@ access (Grid g) = go (toList g) g [] [] 0
                                        , dx <- [-1..1]
                                        , (dy, dx) /= (0, 0)
                                        , let p = (y + dy, x + dx)
-                                       , p `HashSet.member` s
+                                       , p `isElem` s
                                        ]
 
 
