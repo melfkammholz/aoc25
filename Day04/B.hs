@@ -13,6 +13,7 @@ gridP = do
   let (m, n) = (length g, length (g ! 0))
   return (Grid (listArray ((0, 0), (m - 1, n - 1)) (concat g)))
 
+
 toGraph :: Grid -> Graph
 toGraph (Grid g) =
   let (_, (m, n)) = bounds g

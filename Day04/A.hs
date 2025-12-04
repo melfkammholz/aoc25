@@ -3,6 +3,7 @@ module Day04.A where
 import MyPrelude
 import qualified Data.Array as Array
 
+
 newtype Grid = Grid (Array (Int, Int) Char)
   deriving Show
 
