@@ -13,6 +13,8 @@
       show strong: self.methods.alert.with(self: self)
       show heading.where(level: self.slide-level + 1): set text(1.4em)
       show raw: set text(font: "CaskaydiaCove NF", 1em)
+      show math.equation.where(block: false): box
+      show raw.where(block: false): box
 
       body
     },
@@ -81,8 +83,7 @@
 Ein Wort $w in Sigma^*$ ist genau dann eine Wiederholung, wenn ein
 $i in { 2, 3, ..., abs(w) }$ existiert, sodass
 $ i - 1 + "LCP"_i (w) = abs(w) and gcd(i - 1, "LCP"_i (w)) = i - 1, $
-wobei $"LCP"_i (w) = max { k in {i, i + 1, ..., abs(w)} | w[i..k] in "Pref"(w) }$
-ist.
+wobei $"LCP"_i (w) = max { k in {i, i + 1, ..., abs(w)} | w[i..k] in "Pref"(w) }$ ist, falls ein $k$ existiert, sonst ist $"LCP"_i (w) = 0$.
 
 _Beispiel_
 $
