@@ -199,3 +199,11 @@ Ist mir aufgefallen, dass man das Problem greedy lösen kann? Nö. Wollte ich
 ein DP sehen und es mithilfe eines DP lösen? Ja.
 #emoji.cocktail.tropical #h(-.6em) #emoji.face.cool
 
+== Tag 4 (Gabelstapler und Wände durchbrechen)
+
+#align(center + horizon)[
+  Nicht weiter interessant für mich. Deshalb ist hier ein meme.
+  // https://www.reddit.com/r/adventofcode/comments/1pdv05i/2025_day_4_part_12_surely_there_must_be_a_better/
+  #image("images/forklift.jpg", height: 73%)
+]
+
