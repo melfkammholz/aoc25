@@ -17,7 +17,7 @@ banksP = some (bankP <* newline)
 joltage :: Bank -> Int
 joltage (Bank xs) = go xs [] 12 (length xs)
   where
-    go []     s      k _             = foldr (\d x -> x * 10 + d) 0 (drop (length s - 12) s)
+    go []     s      k _             = hornerR (drop (length s - 12) s)
     go xs     ys     k n | k == n    = go [] (reverse xs ++ ys) 0 0
     go (x:xs) []     k n             = go xs [x] (k - 1) (n - 1)
     go (x:xs) (y:ys) k n | x <= y    = go xs (x : y : ys) (k - 1) (n - 1)

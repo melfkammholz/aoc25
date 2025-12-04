@@ -4,6 +4,7 @@
 {-# LANGUAGE UndecidableInstances #-}
 module MyPrelude (
          app,
+         hornerL, hornerR,
          cartesian, lengthOn, foldl',
 
          module Control.Applicative,
@@ -68,11 +69,19 @@ time act = do
   return x
 
 
+hornerL :: (Foldable t, Num a) => t a -> a
+hornerL = foldl' (\x d -> x * 10 + d) 0
+
+hornerR :: (Foldable t, Num a) => t a -> a
+hornerR = foldr (\d x -> x * 10 + d) 0
+
+
 lengthOn :: Foldable t => (a -> Bool) -> t a -> Int
 lengthOn p = foldl' (\l x -> l + if p x then 1 else 0) 0
 
-cartesian :: [a] -> [b] -> [(a, b)]
+cartesian :: Applicative f => f a -> f b -> f (a, b)
 cartesian xs ys = (,) <$> xs <*> ys
+
 
 type Parser = Parsec String ()
 
