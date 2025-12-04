@@ -220,7 +220,7 @@ access (Grid g) = m + if m > 0 then access (Grid g') else 0
   where
     vs = fmap (< 4) (indegree g)
     m = lengthOn id vs
-    g' = deleteVertices (fmap (< 4) (indegree g)) g
+    g' = deleteVertices vs g
 ```
 
 == Löschen von Knoten mit Reindexierung
