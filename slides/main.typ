@@ -208,3 +208,36 @@ ein DP sehen und es mithilfe eines DP lösen? Ja.
   #image("images/forklift.jpg", height: 73%)
 ]
 
+== Just kidding #emoji.face.tongue.squint Etwas später an Tag 4
+
+Fasse die Papierrollen als Subgraph des Gitter-Graphen auf. Lösche iterativ
+alle Knoten deren Ausgangsgrad kleiner als 4 ist. In Haskell mit
+```hs Graph``` (Adjazenzlisten) aus ```hs Data.Graph```.
+
+```hs
+access :: Grid -> Int
+access (Grid g) = m + if m > 0 then access (Grid g') else 0
+  where
+    vs = fmap (< 4) (indegree g)
+    m = lengthOn id vs
+    g' = deleteVertices (fmap (< 4) (indegree g)) g
+```
+
+== Löschen von Knoten mit Reindexierung
+
+#align(center + horizon)[
+  #text(0.96em)[
+    ```hs
+    deleteVertices :: Array Int Bool -> Graph -> Graph
+    deleteVertices vs g =
+      let bs@(m, n) = Array.bounds g
+          rem = filter (\v -> not (vs ! v))
+          vs' = rem (Array.indices g)
+          ixs = Array.array bs (zip vs' [m..])
+       in Array.array (m, n - lengthOn id vs)
+            [(ixs ! v, fmap (ixs !) (rem ws)) | (v, ws) <- Array.assocs g
+                                              , not (vs ! v)
+                                              ]
+    ```
+  ]
+]

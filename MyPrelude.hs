@@ -30,6 +30,7 @@ import Control.Applicative
 import Data.List (foldl')
 import Data.Proxy
 import Data.Kind
+import Data.Foldable (Foldable)
 import qualified Data.Array as Array
 import Data.Array (Array)
 import qualified Data.List as List
@@ -64,7 +65,7 @@ time act = do
   return x
 
 
-lengthOn :: (a -> Bool) -> [a] -> Int
+lengthOn :: Foldable t => (a -> Bool) -> t a -> Int
 lengthOn p = foldl' (\l x -> l + if p x then 1 else 0) 0
 
 cartesian :: [a] -> [b] -> [(a, b)]
@@ -267,17 +268,15 @@ instance BoolAlgebra b => BoolAlgebra (a -> b) where
   neg p = \x -> neg (p x)
 
 
-deleteVertices :: HashSet Graph.Vertex -> Graph -> Graph
+deleteVertices :: Array Int Bool -> Graph -> Graph
 deleteVertices vs g =
   let bs@(m, n) = Array.bounds g
-      rem = filter (\v -> not (HashSet.member v vs))
+      rem = filter (\v -> not (vs ! v))
       vs' = rem (Array.indices g)
       ixs = Array.array bs (zip vs' [m..])
-      g' = Array.array (m, n - length vs)
+      g' = Array.array (m, n - lengthOn id vs)
                        [(ixs ! v, fmap (ixs !) (rem ws)) | (v, ws) <- Array.assocs g
-                                                         , not (HashSet.member v vs)
+                                                         , not (vs ! v)
                                                          ]
    in g'
-
-
 

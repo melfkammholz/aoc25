@@ -32,11 +32,11 @@ gridP = do
 
 
 access :: Grid -> Int
-access (Grid g) = if null vs then 0 else length vs + access (Grid g')
+access (Grid g) = m + if m > 0 then access (Grid g') else 0
   where
-    ind = indegree g
-    vs = fromList (filter (\v -> ind ! v < 4) (indices g))
-    g' = deleteVertices vs g
+    vs = fmap (< 4) (indegree g)
+    m = lengthOn id vs
+    g' = deleteVertices (fmap (< 4) (indegree g)) g
 
 
 main :: IO ()
