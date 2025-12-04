@@ -250,6 +250,11 @@ instance Container (Seq a) where
   insert = Seq.insertAt
 
 
+-- class UnorderedCollection c where
+--   type Item c
+--   elem :: Item c -> c -> Bool
+--   size :: c -> Int
+
 infixr 3 .&&
 infixr 2 .||
 
@@ -275,8 +280,8 @@ deleteVertices vs g =
       vs' = rem (Array.indices g)
       ixs = Array.array bs (zip vs' [m..])
       g' = Array.array (m, n - lengthOn id vs)
-                       [(ixs ! v, fmap (ixs !) (rem ws)) | (v, ws) <- Array.assocs g
-                                                         , not (vs ! v)
-                                                         ]
+             [(ixs ! v, fmap (ixs !) (rem ws)) | (v, ws) <- Array.assocs g
+                                               , not (vs ! v)
+                                               ]
    in g'
 
