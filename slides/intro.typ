@@ -37,8 +37,11 @@
 + In der Lobby angekommen, fanden wir defekte Fahrstühle und Rolltreppen.
   Letztere konnten wir durch das Anschalten von Batterien, die die maximal
   mögliche Spannung erzeugten, wieder funktionsfähig machen.
++ Wir haben Papierrollen aus den Weg geräumt, damit wir eine Wand durchbrechen
+  konnten.
 
 #focus-slide[
   #set text(1.5em)
   Bühne frei für euch!
 ]
+
