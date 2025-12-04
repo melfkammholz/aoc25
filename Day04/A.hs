@@ -1,7 +1,7 @@
 module Day04.A where
 
 import MyPrelude
-import qualified Data.Array as Array
+import Data.Array (bounds)
 
 
 newtype Grid = Grid (Array (Int, Int) Char)
@@ -18,7 +18,7 @@ access :: Grid -> Int
 access (Grid g) = lengthOn ((== '@') . (g !) .&& (< 4) . adj)
                            ([0..m] `cartesian` [0..n])
   where
-    (_, (m, n)) = Array.bounds g
+    (_, (m, n)) = bounds g
 
     a !? p@(y, x) = if 0 <= y && y <= m && 0 <= x && x <= n
                       then a ! p
