@@ -10,7 +10,7 @@ module MyPrelude (
 
          Parser, numP,
 
-         sepBy, char, digit, newline,
+         sepBy, oneOf, char, digit, newline,
 
          ModInt, modInt, toInt, moddiv, modinv,
 
