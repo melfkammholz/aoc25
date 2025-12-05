@@ -268,7 +268,7 @@ access g = m + if m > 0 then access g' else 0
     where
       go [r] = size r
       go (r1@(Range a1 b1) : r2@(Range a2 b2) : rs)
-        | a2 <= b1  = go (insert (max b1 b2) r1 : rs)
+        | a2 <= b1  = go (Range a1 (max b1 b2) : rs)
         | otherwise = size r1 + go (r2 : rs)
   ```
 ]
