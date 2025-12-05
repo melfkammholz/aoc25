@@ -4,14 +4,10 @@ import MyPrelude
 import qualified Data.Sequence as Seq
 
 
-data Range = Range Int Int
-  deriving Show
+type ProductID = Int
 
-rangeP :: Parser Range
-rangeP = Range <$> numP <*> (char '-' *> numP)
-
-rangesP :: Parser [Range]
-rangesP = (rangeP `sepBy` char ',') <* newline
+rangesP :: Parser [Range ProductID]
+rangesP = (rangeP numP `sepBy` char ',') <* newline
 
 
 isRep :: String -> Bool
@@ -20,7 +16,7 @@ isRep s =
       z = zalg s
    in Seq.foldrWithIndex (\i zi b -> b || i + zi == n && gcd i zi == i) False z
 
-silly :: Range -> [Int]
+silly :: Range ProductID -> [ProductID]
 silly (Range a b) = filter (isRep . show) [a..b]
 
 

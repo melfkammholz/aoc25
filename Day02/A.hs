@@ -4,20 +4,16 @@ import MyPrelude
 import Data.List (inits, tails)
 
 
-data Range = Range Int Int
-  deriving Show
+type ProductID = Int
 
-rangeP :: Parser Range
-rangeP = Range <$> numP <*> (char '-' *> numP)
-
-rangesP :: Parser [Range]
-rangesP = (rangeP `sepBy` char ',') <* newline
+rangesP :: Parser [Range ProductID]
+rangesP = (rangeP numP `sepBy` char ',') <* newline
 
 
-invalid :: Int -> Bool
+invalid :: ProductID -> Bool
 invalid x = or (zipWith (==) (inits (show x)) (tails (show x)))
 
-silly :: Range -> [Int]
+silly :: Range ProductID -> [ProductID]
 silly (Range a b) = filter invalid [a..b]
 
 
