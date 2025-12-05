@@ -5,7 +5,7 @@
 module MyPrelude (
          app,
          hornerL, hornerR,
-         cartesian, lengthOn, foldl',
+         cartesian, lengthOn, foldl', sort,
 
          module Control.Applicative,
 
@@ -22,6 +22,7 @@ module MyPrelude (
          Array, Array.listArray,
          HashSet,
          fromList, toList,
+         Range(..), rangeP,
 
          BoolAlgebra(..),
 
@@ -30,7 +31,7 @@ module MyPrelude (
        ) where
 
 import Control.Applicative
-import Data.List (foldl')
+import Data.List (foldl', sort)
 import Data.Proxy
 import Data.Kind
 import Data.Foldable (Foldable)
@@ -303,6 +304,25 @@ instance Eq a => UnorderedContainer (Seq a) where
   delete x s = case Seq.findIndexL (== x) s of
                  Nothing -> s
                  Just i  ->  Seq.deleteAt i s
+
+
+data Range a = Range a a
+  deriving (Eq, Ord, Show)
+
+rangeP :: Parser a -> Parser (Range a)
+rangeP p = Range <$> p <*> (char '-' *> p)
+
+instance (Integral a, Ord a) => UnorderedContainer (Range a) where
+  type UCItem (Range a) = a
+  isElem x (Range a b) = a <= x && x <= b
+  size (Range a b) = fromInteger (toInteger (b - a + 1))
+  insert x r@(Range a b)
+    | x < a        = Range x b
+    | x > b        = Range a x
+    | otherwise    = r
+  delete x r@(Range a b)
+    | not (x `isElem` r) = r
+    | otherwise          = Range a x
 
 
 infixr 3 .&&
