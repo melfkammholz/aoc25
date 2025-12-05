@@ -22,10 +22,9 @@ prepare (Database rs ids) = Database (sort rs) (sort ids)
 fresh :: Database -> Int
 fresh (Database rs _) = go rs
   where
-    go [] = 0
     go [r] = size r
     go (r1@(Range a1 b1) : r2@(Range a2 b2) : rs)
-      | a2 <= b1 = go (insert (max b1 b2) r1 : rs)
+      | a2 <= b1  = go (insert (max b1 b2) r1 : rs)
       | otherwise = size r1 + go (r2 : rs)
 
 
