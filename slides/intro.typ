@@ -28,17 +28,22 @@
   == Die Dekoration des Nordpols
 ]
 
+
 == Unser Abenteuer führte uns ...
 
 + zur Basis des Nordpols, dessen Eingang durch ein Passwort geschützt war, das
   in einem Safe versteckt war.
 + Im Souvenir-Geschäfts mussten wir die hauseigene Produkt-Datenbank von
-  unsinnigen Produkt-IDs bereinigen, die durch einen Angestellten eingegeben wurden.
+  unsinnigen Produkt-IDs bereinigen, die durch einen Angestellten eingegeben
+  wurden.
 + In der Lobby angekommen, fanden wir defekte Fahrstühle und Rolltreppen.
   Letztere konnten wir durch das Anschalten von Batterien, die die maximal
   mögliche Spannung erzeugten, wieder funktionsfähig machen.
 + Wir haben Papierrollen aus den Weg geräumt, damit wir eine Wand durchbrechen
   konnten.
++ Die Weihnachtshelfenden des Nordpols ist einer Lebensmittelvergiftung
+  entkommen, da wir frische Zutaten identifizieren konnten.
+
 
 #focus-slide[
   #set text(1.5em)
