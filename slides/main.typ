@@ -254,9 +254,9 @@ access g = m + if m > 0 then access g' else 0
   ]
 
 
-  Wenn $a_(i+1) <= b_i$ gilt, dann $A_i$ und $A_(i + 1)$ nicht disjunkt und wir
-  vereinigen sie als $[a_i, max(b_i, b_(i + 1))]$. Solange so ein $i$ existiert,
-  wiederholen wieder diesen Schritt.
+  Wenn $a_(i+1) <= b_i$ gilt, dann sind $A_i$ und $A_(i + 1)$ nicht disjunkt und
+  wir vereinigen sie als $[a_i, max(b_i, b_(i + 1))]$. Solange so ein $i$
+  existiert, wiederholen wieder diesen Schritt.
 ]
 
 == Implementierung
