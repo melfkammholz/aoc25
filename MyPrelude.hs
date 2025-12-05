@@ -309,6 +309,7 @@ instance Eq a => UnorderedContainer (Seq a) where
 data Range a = Range a a
   deriving (Eq, Ord, Show)
 
+-- TODO remove parser if different syntaxes for ranges occur
 rangeP :: Parser a -> Parser (Range a)
 rangeP p = Range <$> p <*> (char '-' *> p)
 
