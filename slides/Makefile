@@ -5,10 +5,10 @@ CODE_FONTS = $(FONT_DIR)/CaskaydiaCoveNerdFont*.ttf
 
 all: main.pdf
 
-main.pdf: main.typ $(FONT_DIR)/.fonts-extracted
+main.pdf: main.typ $(FONT_DIR)/.fonts-extracted forklift.jpg
 	typst compile --font-path $(FONT_DIR) main.typ
 
-intro.pdf: intro.typ $(FONT_DIR)/.fonts-extracted forklift.jpg
+intro.pdf: intro.typ $(FONT_DIR)/.fonts-extracted
 	typst compile --font-path $(FONT_DIR) intro.typ
 
 forklift.jpg:

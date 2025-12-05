@@ -241,3 +241,36 @@ access g = m + if m > 0 then access g' else 0
     ```
   ]
 ]
+
+== Tag 5 (Keine Lebenmittelsvergiftung am Nordpol)
+
+#align(horizon)[
+  Gegeben sind $A_i = [a_i, b_i] = {a_i, a_i + 1, ..., b_i}, a_i <= b_i$.
+  Wir sollen $abs(union.big_(i=1)^n [a_i, b_i])$ berechnen.
+  #footnote[
+    Entschuldigung, wir sollen das Integral der Indikatorfunktion $chi_A$ unter
+    dem Zählmaß des Messraums $(ZZ, cal(P)(ZZ))$ berechnen, wobei
+    $A = union.big_(i=1)^n [a_i, b_i]$ ist.
+  ]
+
+
+  Wenn $a_(i+1) <= b_i$ gilt, dann $A_i$ und $A_(i + 1)$ nicht disjunkt und wir
+  vereinigen sie als $[a_i, max(b_i, b_(i + 1))]$. Solange so ein $i$ existiert,
+  wiederholen wieder diesen Schritt.
+]
+
+== Implementierung
+
+#align(center + horizon)[
+  ```hs
+  fresh :: Database -> Int
+  fresh (Database rs _) = go rs
+    where
+      go [] = 0
+      go [r] = size r
+      go (r1@(Range a1 b1) : r2@(Range a2 b2) : rs)
+        | a2 <= b1  = go (insert (max b1 b2) r1 : rs)
+        | otherwise = size r1 + go (r2 : rs)
+  ```
+]
+
