@@ -211,7 +211,7 @@ ein DP sehen und es mithilfe eines DP lösen? Ja.
 == Just kidding #emoji.face.tongue.squint Etwas später an Tag 4
 
 Fasse die Papierrollen als Subgraph des Gitter-Graphen auf. Lösche iterativ
-alle Knoten deren Ausgangsgrad kleiner als 4 ist. In Haskell mit
+alle Knoten deren Eingangsgrad kleiner als 4 ist. In Haskell mit
 ```hs Graph``` (Adjazenzlisten) aus ```hs Data.Graph```.
 
 ```hs
