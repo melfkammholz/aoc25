@@ -25,7 +25,7 @@ homeworkP = do
 solve :: Homework -> Int
 solve (Homework ps) = sum (map solveP ps)
   where
-    solveP (Problem xs Plus) = sum xs
+    solveP (Problem xs Plus)  = sum xs
     solveP (Problem xs Times) = product xs
 
 
