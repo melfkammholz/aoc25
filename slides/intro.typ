@@ -43,6 +43,8 @@
   konnten.
 + Die Weihnachtshelfenden des Nordpols ist einer Lebensmittelvergiftung
   entkommen, da wir frische Zutaten identifizieren konnten.
++ Durch einen Müllschlucker aus der Cafetaria in eine Müllpresse traffen wir
+  auf eine junge Kopffüßerin und halfen ihr bei ihren Mathematik-Hausaufgaben.
 
 
 #focus-slide[

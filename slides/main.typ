@@ -273,3 +273,21 @@ access g = m + if m > 0 then access g' else 0
   ```
 ]
 
+== Tag 6 (Mathematik-Hausaufgaben eines Kopffüßer)
+
+```hs
+app :: Parser a -> (a -> IO ()) -> IO ()
+app p f = do
+  inp <- getContents
+  either print (time . f) (parse p "<stdin>" inp)
+
+inputT :: State String u -> State String u
+inputT s = s { stateInput = input }
+  where
+    Just (nums, ops) = unsnoc (lines (stateInput s))
+    input = filter (/= ' ') (unlines (transpose nums) ++ ops)
+
+main :: IO ()
+main = app (updateParserState inputT >> homeworkP) (print . solve)
+```
+
