@@ -5,7 +5,7 @@
 module MyPrelude (
          app,
          hornerL, hornerR,
-         cartesian, lengthOn, foldl', sort, transpose,
+         cartesian, lengthOn, foldl', sort, transpose, unsnoc,
 
          module Control.Applicative,
 
@@ -51,8 +51,8 @@ import qualified GHC.IsList as IsList
 import GHC.IsList (fromList, toList)
 import GHC.TypeLits
 import System.CPUTime
-import Text.Parsec hiding (many)
-import Text.Parsec.Char
+import Text.Parsec hiding (many, newline, spaces)
+import Text.Parsec.Char (char)
 import Text.Printf
 
 
@@ -83,11 +83,20 @@ lengthOn p = foldl' (\l x -> l + if p x then 1 else 0) 0
 cartesian :: Applicative f => f a -> f b -> f (a, b)
 cartesian xs ys = (,) <$> xs <*> ys
 
+unsnoc :: [a] -> Maybe ([a], a)
+unsnoc = foldr (\x -> Just . maybe ([], x) (\(~(a, b)) -> (x : a, b))) Nothing
+
 
 type Parser = Parsec String ()
 
 numP :: Parser Int
 numP = read <$> many1 digit
+
+spaces :: Parser ()
+spaces = many (char ' ') *> pure ()
+
+newline :: Parser ()
+newline = spaces *> char '\n' *> pure ()
 
 
 type family NonZero (n :: Nat) (s :: ErrorMessage) :: Constraint where
