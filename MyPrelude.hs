@@ -5,11 +5,11 @@
 module MyPrelude (
          app,
          hornerL, hornerR,
-         cartesian, lengthOn, foldl', sort,
+         cartesian, lengthOn, foldl', sort, transpose,
 
          module Control.Applicative,
 
-         Parser, numP,
+         Parser, numP, spaces,
 
          sepBy, oneOf, char, digit, newline,
 
@@ -31,7 +31,7 @@ module MyPrelude (
        ) where
 
 import Control.Applicative
-import Data.List (foldl', sort)
+import Data.List (foldl', sort, transpose)
 import Data.Proxy
 import Data.Kind
 import Data.Foldable (Foldable)
