@@ -1,18 +1,13 @@
 module Day07.B where
 
 import MyPrelude
-import Data.Array (bounds)
 
 
 newtype Diagram = Diagram (Array (Int, Int) Char)
   deriving Show
 
 diagramP :: Parser Diagram
-diagramP = do
-  g <- many (many (oneOf "S.^") <* newline)
-  let (h, w) = (length g, length (g ! 0))
-      a      = listArray ((0, 0), (h - 1, w - 1)) (concat g)
-  return (Diagram a)
+diagramP = Diagram <$> gridP (oneOf "S.^")
 
 
 timelines :: Diagram -> Int

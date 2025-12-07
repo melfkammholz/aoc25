@@ -1,21 +1,10 @@
 module Day04.B where
 
 import MyPrelude
-import Data.Array (bounds)
 
 
-newtype Grid = Grid (Array (Int, Int) Char)
-  deriving Show
-
-gridP :: Parser Grid
-gridP = do
-  g <- some (some (oneOf ".@") <* newline)
-  let (m, n) = (length g, length (g ! 0))
-  return (Grid (listArray ((0, 0), (m - 1, n - 1)) (concat g)))
-
-
-toGraph :: Grid -> Graph
-toGraph (Grid g) =
+toGraph :: Grid Char -> Graph
+toGraph g =
   let (_, (m, n)) = bounds g
       adj p@(y, x) =
         [y' * (n + 1) + x' | (dy, dx) <- [-1..1] `cartesian` [-1..1]
@@ -31,7 +20,6 @@ toGraph (Grid g) =
                                         ]
    in gr
 
-
 access :: Graph -> Int
 access g = m + if m > 0 then access g' else 0
   where
@@ -41,4 +29,4 @@ access g = m + if m > 0 then access g' else 0
 
 
 main :: IO ()
-main = app gridP (print . access . toGraph)  -- 8317
+main = app (gridP (oneOf ".@")) (print . access . toGraph)  -- 8317

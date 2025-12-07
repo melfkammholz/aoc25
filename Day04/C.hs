@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedLists #-}
 module Day04.C where
 
-import MyPrelude
+import MyPrelude hiding (Grid, gridP)
 
 
 newtype Grid = Grid (HashSet (Int, Int))

@@ -9,7 +9,7 @@ module MyPrelude (
 
          module Control.Applicative,
 
-         Parser, numP, spaces,
+         Parser, numP, spaces, Grid, gridP,
 
          sepBy, oneOf, char, digit, newline,
 
@@ -19,7 +19,7 @@ module MyPrelude (
 
          Container(..),
          UnorderedContainer(..),
-         Array, Array.listArray,
+         Array, Array.bounds, Array.listArray,
          HashSet,
          fromList, toList,
          Range(..), rangeP,
@@ -96,6 +96,14 @@ type Parser = Parsec String ()
 
 numP :: Parser Int
 numP = read <$> many1 digit
+
+type Grid = Array (Int, Int)
+
+gridP :: Parser a -> Parser (Grid a)
+gridP p = do
+  g <- many (many p <* newline)
+  let (h, w) = (length g, length (g ! 0))
+  return (Array.listArray ((0, 0), (h - 1, w - 1)) (concat g))
 
 spaces :: Parser ()
 spaces = many (char ' ') *> pure ()
