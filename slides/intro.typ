@@ -45,6 +45,9 @@
   entkommen, da wir frische Zutaten identifizieren konnten.
 + Durch einen Müllschlucker aus der Cafetaria in eine Müllpresse traffen wir
   auf eine junge Kopffüßerin und halfen ihr bei ihren Mathematik-Hausaufgaben.
++ Unter zur Hilfenahme der Viele-Welten-Interpretation mussten wir die vielen
+  Zeitachsen berechnen, durch die ein Tachyon reisen kann, um die
+  Quanten-Tachyonen-Mannigfaltigkeit zu reparieren.
 
 
 #focus-slide[

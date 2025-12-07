@@ -291,3 +291,22 @@ main :: IO ()
 main = app (updateParserState inputT >> homeworkP) (print . solve)
 ```
 
+== Tag 7 (Tachyonen in vielen Welten)
+
+Endlich ein DP, das sich gelohnt hat! #emoji.face.party
+
+#text(0.9em)[
+  $
+  "dp"(y, x) = cases(
+    1 & quad "falls" D_(y, x) = mono("S"),
+    0 & quad "falls" y = 0,
+    "dp"(y - 1, x) & quad "falls" D_(y, x) = mono("."),
+    omega(0 <= x - 1 and D_(y - 1, x - 1) = mono("^")) dot "dp"(y - 1, x - 1) &,
+    quad + omega(x + 1 <= w and D_(y - 1, x + 1) = mono("^")) dot "dp"(y - 1, x + 1) &,
+    quad + omega(D_(y - 1, x) != mono("^")) dot "dp"(y - 1, x) & quad "sonst"
+  )
+  $
+  für $y = 0, 1, ..., h - 1$ und $x = 0, 1, ..., w - 1$, wobei $omega(top) = 1$
+  und $omega(bot) = 0$ sind.
+]
+
