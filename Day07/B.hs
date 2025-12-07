@@ -18,10 +18,10 @@ diagramP = do
 timelines :: Diagram -> Int
 timelines (Diagram g) = sum [dp ! (h, x) | x <- [0..w]]
   where
-    (_, (h, w)) = bounds g
+    bs@(_, (h, w)) = bounds g
     Just s = find (\x -> g ! (0, x) == 'S') [0..w]
 
-    dp = listArray (bounds g) [go y x | y <- [0..h], x <- [0..w]]
+    dp = listArray bs [go y x | y <- [0..h], x <- [0..w]]
 
     go 0 x = if x == s then 1 else 0
     go y x =

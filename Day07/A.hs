@@ -18,10 +18,10 @@ diagramP = do
 splits :: Diagram -> Int
 splits (Diagram g) = lengthOn id [spl y x | y <- [0..h], x <- [0..w]]
   where
-    (_, (h, w)) = bounds g
+    bs@(_, (h, w)) = bounds g
     Just s = find (\x -> g ! (0, x) == 'S') [0..w]
 
-    dp = listArray (bounds g) [go y x | y <- [0..h], x <- [0..w]]
+    dp = listArray bs [go y x | y <- [0..h], x <- [0..w]]
 
     spl y x = g ! (y, x) == '^' && dp ! (y, x)
 
