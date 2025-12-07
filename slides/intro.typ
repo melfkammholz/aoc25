@@ -1,3 +1,4 @@
+#import "@preview/cades:0.3.1": qr-code
 #import "@preview/cetz:0.4.2"
 #import "@preview/touying:0.6.1": *
 #import themes.simple: *
@@ -26,6 +27,27 @@
   #set text(1.5em, fill: white)
   = Advent of Code 2025
   == Die Dekoration des Nordpols
+
+  #v(1em)
+
+  #line(stroke: white, length: 3em)
+
+  #v(.33em)
+
+  #grid(
+    columns: (1fr, auto),
+    gutter: 1em,
+    text(0.73em, align(left)[
+      Wir bestellen Pizza (oder anderes) bei Farina di Nonna auf Selbstkosten.
+      Bestellschluss ist $17^30$ Uhr. Meldet euch bitte mit eurer Bestellung
+      bei Kairelius Prottus.
+    ]),
+    box(
+      fill: white,
+      outset: .125em,
+      qr-code("https://farinadinonna.pizza/speisekarte/", color: primary, width: 3em)
+    )
+  )
 ]
 
 
