@@ -3,7 +3,7 @@ module Day07.B where
 import MyPrelude
 
 
-newtype Diagram = Diagram (Array (Int, Int) Char)
+newtype Diagram = Diagram (Grid Char)
   deriving Show
 
 diagramP :: Parser Diagram
