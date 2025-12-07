@@ -5,7 +5,7 @@
 module MyPrelude (
          app,
          hornerL, hornerR,
-         cartesian, lengthOn, foldl', sort, transpose, unsnoc,
+         cartesian, chunksOf, lengthOn, find, foldl', sort, transpose, unsnoc,
 
          module Control.Applicative,
 
@@ -31,7 +31,7 @@ module MyPrelude (
        ) where
 
 import Control.Applicative
-import Data.List (foldl', sort, transpose)
+import Data.List (find, foldl', sort, transpose)
 import Data.Proxy
 import Data.Kind
 import Data.Foldable (Foldable)
@@ -82,6 +82,11 @@ lengthOn p = foldl' (\l x -> l + if p x then 1 else 0) 0
 
 cartesian :: Applicative f => f a -> f b -> f (a, b)
 cartesian xs ys = (,) <$> xs <*> ys
+
+chunksOf :: Int -> [a] -> [[a]]
+chunksOf k xs = case splitAt k xs of
+                  (ys, []) -> [ys]
+                  (ys, zs) -> ys : chunksOf k zs
 
 unsnoc :: [a] -> Maybe ([a], a)
 unsnoc = foldr (\x -> Just . maybe ([], x) (\(~(a, b)) -> (x : a, b))) Nothing
