@@ -2,6 +2,7 @@ module Day08.B where
 
 import MyPrelude
 import qualified Utils.UnionFind as UF
+import Control.Monad.ST (runST)
 import Data.List (tails)
 
 
@@ -31,13 +32,18 @@ solve vs = getX (vs ! v) * getX (vs ! w)
         idxs ((v, _), (w, _)) = (v, w)
         key ((_, v), (_, w)) = dist2 v w
 
-    mst _  []          = Nothing
-    mst uf ((v, w):es)
-      | s         = mst uf' es
-      | otherwise = mst (UF.union v w uf') es <|> Just (v, w)
-      where (s, uf') = UF.same v w uf
+    mst uf []            !acc = return acc
+    mst uf ((v, w) : es) !acc = do
+      ing <- UF.same v w uf
+      if ing
+        then mst uf es acc
+        else do
+          UF.union v w uf
+          mst uf es (Just (v, w) <|> acc)
 
-    Just (v, w) = mst (UF.new (length vs)) es
+    Just (v, w) = runST $ do
+      uf <- UF.new (length vs)
+      mst uf es Nothing
 
 
 main :: IO ()

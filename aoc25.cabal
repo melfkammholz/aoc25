@@ -10,7 +10,8 @@ library
     extra,
     hashable,
     parsec >= 3.1.18,
-    unordered-containers
+    unordered-containers,
+    vector
   other-modules:
     MyPrelude
   hs-source-dirs: .

@@ -1,33 +1,37 @@
 module Utils.UnionFind where
 
-import MyPrelude hiding (find)
-import qualified Data.Sequence as Seq
+import Control.Monad (when)
+import Control.Monad.ST
+import qualified Data.Vector.Unboxed.Mutable as VU
 
-type UnionFind = Seq Int
+type UnionFind s = VU.MVector s Int
 
-new :: Int -> UnionFind
-new n = Seq.replicate n (-1)
+new :: Int -> ST s (UnionFind s)
+new n = VU.replicate n (-1)
 
-sizes :: UnionFind -> [Int]
-sizes = foldr (\v vs -> if v < 0 then (-v) : vs else vs) []
+find :: Int -> UnionFind s -> ST s Int
+find x uf = do
+  y <- VU.read uf x
+  if y < 0
+    then return x
+    else do
+      r <- find y uf
+      VU.write uf x r
+      return r
 
-find :: Int -> UnionFind -> (Int, UnionFind)
-find v uf
-  | uf ! v < 0 = (v, uf)
-  | otherwise  = let (p, uf') = find (uf ! v) uf in (p, updateAt v p uf')
+union :: Int -> Int -> UnionFind s -> ST s ()
+union x y uf = do
+  rx <- find x uf
+  ry <- find y uf
+  when (rx /= ry) $ do
+    sx <- VU.read uf rx
+    sy <- VU.read uf ry
+    let (x', y') = if sx < sy then (rx, ry) else (ry, rx)
+    VU.write uf x' (sx + sy)
+    VU.write uf y' x'
 
-union :: Int -> Int -> UnionFind -> UnionFind
-union v w uf0 = uf4
-  where
-    (pv, uf1) = find v uf0
-    (pw, uf2) = find w uf1
-    (pv', pw') = if uf2 ! pv < uf2 ! pw then (pv, pw) else (pw, pv)
-    uf3 = updateAt pv' (uf2 ! pv' + uf2 ! pw') uf2
-    uf4 = updateAt pw' pv' uf3
+same :: Int -> Int -> UnionFind s -> ST s Bool
+same x y uf = (==) <$> find x uf <*> find y uf
 
-same :: Int -> Int -> UnionFind -> (Bool, UnionFind)
-same v w uf = (pv == pw, uf'')
-  where
-    (pv, uf')  = find v uf
-    (pw, uf'') = find w uf'
-
+sizes :: UnionFind s -> ST s [Int]
+sizes = VU.foldr (\v vs -> if v < 0 then (-v) : vs else vs) []
