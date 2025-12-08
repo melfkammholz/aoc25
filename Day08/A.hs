@@ -22,7 +22,11 @@ dist2 :: Num a => Vec3 a -> Vec3 a -> a
 dist2 (Vec3 x1 y1 z1) (Vec3 x2 y2 z2) = (x2 - x1) ^ 2 + (y2 - y1) ^ 2 + (z2 - z1) ^ 2
 
 solve :: Int -> [Vec3 Int] -> Int
-solve k vs = product . take 3 . sortOn negate $ ss
+solve k vs = runST $ do
+    uf <- UF.new (length vs)
+    mst uf k es
+    ss <- UF.sizes uf
+    return (product . take 3 . sortOn negate $ ss)
   where
     es = map idxs (sortOn key [(v, w) | (v : ws) <- tails (zip [0..] vs), w <- ws])
       where
@@ -37,11 +41,6 @@ solve k vs = product . take 3 . sortOn negate $ ss
         else do
           UF.union v w uf
           mst uf (k - 1) es
-
-    ss = runST $ do
-      uf <- UF.new (length vs)
-      mst uf k es
-      UF.sizes uf
 
 
 main :: IO ()
