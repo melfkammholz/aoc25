@@ -35,7 +35,6 @@ solve vs = runST $ do
         idxs ((v, _), (w, _)) = (v, w)
         key ((_, v), (_, w)) = dist2 v w
 
-    mst :: UF.UnionFind s -> [(Int, Int)] -> Maybe (Int, Int) -> ST s (Maybe (Int, Int))
     mst uf []            !acc = return acc
     mst uf ((v, w) : es) !acc = do
       ing <- UF.same v w uf
