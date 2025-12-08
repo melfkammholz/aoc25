@@ -28,7 +28,9 @@ module MyPrelude (
          BoolAlgebra(..),
 
          Graph, Graph.graphFromEdges, Graph.indegree,
-         deleteVertices
+         deleteVertices,
+
+         Vec3(..), vec3X, vec3Y, vec3Z, norm2sq, dist2sq
        ) where
 
 import Control.Applicative
@@ -378,4 +380,33 @@ deleteVertices vs g =
                                                , not (vs ! v)
                                                ]
    in g'
+
+
+data Vec3 a = Vec3 !a !a !a
+  deriving (Eq, Ord, Show)
+
+vec3X :: Vec3 a -> a
+vec3X (Vec3 x _ _) = x
+
+vec3Y :: Vec3 a -> a
+vec3Y (Vec3 _ y _) = y
+
+vec3Z :: Vec3 a -> a
+vec3Z (Vec3 _ _ z) = z
+
+instance Num a => Num (Vec3 a) where
+  Vec3 x1 y1 z1 + Vec3 x2 y2 z2 = Vec3 (x1 + x2) (y1 + y2) (z1 + z2)
+  Vec3 x1 y1 z1 - Vec3 x2 y2 z2 = Vec3 (x1 - x2) (y1 - y2) (z1 - z2)
+  Vec3 x1 y1 z1 * Vec3 x2 y2 z2 = Vec3 (y1 * z2 - z1 * y2)
+                                       (z1 * x2 - x1 * z2)
+                                       (x1 * y2 - y1 * x2)
+  abs (Vec3 x y z) = Vec3 (abs x) (abs y) (abs z)
+  signum (Vec3 x y z) = Vec3 (signum x) (signum y) (signum z)
+  fromInteger x = let y = fromInteger x in Vec3 y y y
+
+norm2sq :: Num a => Vec3 a -> a
+norm2sq (Vec3 x y z) = x * x + y * y + z * z
+
+dist2sq :: Num a => Vec3 a -> Vec3 a -> a
+dist2sq x y = norm2sq (x - y)
 
