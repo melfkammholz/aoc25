@@ -3,7 +3,8 @@ module Day08.B where
 import MyPrelude
 import qualified Utils.UnionFind as UF
 import Control.Monad.ST (ST, runST)
-import Data.List (tails)
+import Data.List (tails, findIndex)
+import Debug.Trace
 
 
 data Vec3 a = Vec3 a a a
@@ -42,7 +43,10 @@ solve vs = runST $ do
         then mst uf es acc
         else do
           UF.union v w uf
-          mst uf es (Just (v, w) <|> acc)
+          n <- UF.numClasses uf
+          if n == 1
+            then return (Just (v, w))
+            else mst uf es (Just (v, w) <|> acc)
 
 
 main :: IO ()
