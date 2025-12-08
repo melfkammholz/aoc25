@@ -5,7 +5,7 @@
 module MyPrelude (
          app,
          hornerL, hornerR,
-         cartesian, chunksOf, lengthOn, find, foldl', sort, transpose, unsnoc,
+         cartesian, chunksOf, lengthOn, find, foldl', sort, sortOn, transpose, unsnoc,
 
          module Control.Applicative,
 
@@ -23,6 +23,7 @@ module MyPrelude (
          HashSet,
          fromList, toList,
          Range(..), rangeP,
+         Seq,
 
          BoolAlgebra(..),
 
@@ -31,7 +32,7 @@ module MyPrelude (
        ) where
 
 import Control.Applicative
-import Data.List (find, foldl', sort, transpose)
+import Data.List (find, foldl', sort, sortOn, transpose)
 import Data.Proxy
 import Data.Kind
 import Data.Foldable (Foldable)
