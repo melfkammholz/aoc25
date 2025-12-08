@@ -2,6 +2,7 @@ module Day08.A where
 
 import MyPrelude
 import qualified Utils.UnionFind as UF
+import Control.Monad (when)
 import Control.Monad.ST (runST)
 import Data.List (tails)
 
@@ -30,11 +31,8 @@ solve k vs = runST $ do
     mst uf 0 _           = return ()
     mst uf k ((v, w):es) = do
       ing <- UF.same v w uf
-      if ing
-        then mst uf (k - 1) es
-        else do
-          UF.union v w uf
-          mst uf (k - 1) es
+      when (not ing) (UF.union v w uf)
+      mst uf (k - 1) es
 
 
 main :: IO ()
