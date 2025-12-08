@@ -310,3 +310,7 @@ Endlich ein DP, das sich gelohnt hat! #emoji.face.party
   und $omega(bot) = 0$ sind.
 ]
 
+== Tag 8 (Lichterketten)
+
+Union-find goes brrr...
+

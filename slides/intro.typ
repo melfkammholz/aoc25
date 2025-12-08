@@ -70,6 +70,7 @@
 + Unter zur Hilfenahme der Viele-Welten-Interpretation mussten wir die vielen
   Zeitachsen berechnen, durch die ein Tachyon reisen kann, um die
   Quanten-Tachyonen-Mannigfaltigkeit zu reparieren.
++ Wir haben so wenig Lichterketten wie möglich zwischen Abzweigdosen aufgehangen.
 
 
 #focus-slide[
