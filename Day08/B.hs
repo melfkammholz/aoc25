@@ -2,9 +2,8 @@ module Day08.B where
 
 import MyPrelude
 import qualified Utils.UnionFind as UF
-import Control.Monad.ST (ST, runST)
+import Control.Monad.ST (runST)
 import Data.List (tails, findIndex)
-import Debug.Trace
 
 
 data Vec3 a = Vec3 a a a
