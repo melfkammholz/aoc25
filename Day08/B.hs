@@ -28,7 +28,7 @@ getX (Vec3 x _ _) = x
 solve :: [Vec3 Int] -> Int
 solve vs = runST $ do
     uf <- UF.new (length vs)
-    ~(Just (v, w)) <- mst uf es Nothing
+    (v, w) <- mst uf es
     return (getX (vs ! v) * getX (vs ! w))
   where
     es = map idxs (sortOn key [(v, w) | (v : ws) <- tails (zip [0..] vs), w <- ws])
@@ -36,17 +36,16 @@ solve vs = runST $ do
         idxs ((v, _), (w, _)) = (v, w)
         key ((_, v), (_, w)) = dist2 v w
 
-    mst uf []            !acc = return acc
-    mst uf ((v, w) : es) !acc = do
+    mst uf ((v, w) : es) = do
       ing <- UF.same v w uf
       if ing
-        then mst uf es acc
+        then mst uf es
         else do
           UF.union v w uf
           n <- UF.numClasses uf
           if n == 1
-            then return (Just (v, w))
-            else mst uf es (Just (v, w) <|> acc)
+            then return (v, w)
+            else mst uf es
 
 
 main :: IO ()
