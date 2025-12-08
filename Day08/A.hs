@@ -8,9 +8,7 @@ import Data.List (tails)
 
 
 vec3P :: Parser (Vec3 Int)
-vec3P = do
-  [x, y, z] <- (numP `sepBy` char ',') <* newline
-  return (Vec3 x y z)
+vec3P = Vec3 <$> (numP <* char ',') <*> (numP <* char ',') <*> (numP <* newline)
 
 vec3sP :: Parser [Vec3 Int]
 vec3sP = many vec3P

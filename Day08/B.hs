@@ -2,14 +2,13 @@ module Day08.B where
 
 import MyPrelude
 import qualified Utils.UnionFind as UF
+import Control.Monad (when)
 import Control.Monad.ST (runST)
 import Data.List (tails)
 
 
 vec3P :: Parser (Vec3 Int)
-vec3P = do
-  [x, y, z] <- (numP `sepBy` char ',') <* newline
-  return (Vec3 x y z)
+vec3P = Vec3 <$> (numP <* char ',') <*> (numP <* char ',') <*> (numP <* newline)
 
 vec3sP :: Parser [Vec3 Int]
 vec3sP = many vec3P
@@ -28,14 +27,9 @@ solve vs = runST $ do
 
     mst uf ((v, w) : es) = do
       ing <- UF.same v w uf
-      if ing
-        then mst uf es
-        else do
-          UF.union v w uf
-          n <- UF.numClasses uf
-          if n == 1
-            then return (v, w)
-            else mst uf es
+      when (not ing) (UF.union v w uf)
+      n <- UF.numClasses uf
+      if n == 1 then return (v, w) else mst uf es
 
 
 main :: IO ()
