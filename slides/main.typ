@@ -312,5 +312,29 @@ Endlich ein DP, das sich gelohnt hat! #emoji.face.party
 
 == Tag 8 (Lichterketten)
 
-Union-find goes brrr...
+- Einige Datenstrukturen leben davon, dass sie ständig mutiert werden.
+- Union-Find ist ein besonderes Beispiel, da sich diese Datenstruktur
+  zusätzlich durch Mutation selbstoptimiert.
+- Effizient ist das in Haskell mithilfe der ```hs ST```-Monade außerhalb der
+  ```hs IO``` möglich.
 
+== Implementierung von ```hs find```
+
+#align(center + horizon)[
+  ```hs
+  find :: Int -> UnionFind s -> ST s Int
+  find x uf@(UF _ v) = do
+    y <- VU.read v x
+    if y < 0
+      then return x
+      else do
+        r <- find y uf
+        VU.write v x r
+        return r
+  ```
+]
+
+
+== Tag 9 (Fliesen in einem Kinosaal?)
+
+Ja, nee... Nächster Tag bitte.

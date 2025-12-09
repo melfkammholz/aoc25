@@ -71,6 +71,8 @@
   Zeitachsen berechnen, durch die ein Tachyon reisen kann, um die
   Quanten-Tachyonen-Mannigfaltigkeit zu reparieren.
 + Wir haben so wenig Lichterketten wie möglich zwischen Abzweigdosen aufgehangen.
++ Wir haben das größte Rechteck bestehend aus roten und grünen Fliesen eines
+  Kinosaals berechnet, sodass dieses neu dekoriert werden konnte.
 
 
 #focus-slide[
