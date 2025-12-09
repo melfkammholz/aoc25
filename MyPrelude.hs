@@ -30,7 +30,9 @@ module MyPrelude (
          Graph, Graph.graphFromEdges, Graph.indegree,
          deleteVertices,
 
-         Vec3(..), vec3X, vec3Y, vec3Z, norm2sq, dist2sq
+         Vec3(..), vec3X, vec3Y, vec3Z, norm2sq, dist2sq,
+
+         minmax
        ) where
 
 import Control.Applicative
@@ -409,4 +411,11 @@ norm2sq (Vec3 x y z) = x * x + y * y + z * z
 
 dist2sq :: Num a => Vec3 a -> Vec3 a -> a
 dist2sq x y = norm2sq (x - y)
+
+
+{-# INLINE minmax #-}
+{-# SPECIALIZE minmax :: Int -> Int -> (Int, Int) #-}
+minmax :: Ord a => a -> a -> (a, a)
+minmax a b = if a < b then (a, b) else (b, a)
+
 
