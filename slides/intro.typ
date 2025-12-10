@@ -73,6 +73,8 @@
 + Wir haben so wenig Lichterketten wie möglich zwischen Abzweigdosen aufgehangen.
 + Wir haben das größte Rechteck bestehend aus roten und grünen Fliesen eines
   Kinosaals berechnet, sodass dieses neu dekoriert werden konnte.
++ Es wurden viele Knöpfkombinationen gedrückt, um die Indikatorlichter korrekt
+  einzustellen und um die Joltage-Anforderungen zu erfüllen.
 
 
 #focus-slide[

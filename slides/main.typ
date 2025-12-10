@@ -310,7 +310,7 @@ Endlich ein DP, das sich gelohnt hat! #emoji.face.party
   und $omega(bot) = 0$ sind.
 ]
 
-== Tag 8 (Lichterketten)
+== Tag 8 (Minimal spannende Lichterketten)
 
 - Einige Datenstrukturen leben davon, dass sie ständig mutiert werden.
 - Union-Find ist ein besonderes Beispiel, da sich diese Datenstruktur
@@ -338,3 +338,21 @@ Endlich ein DP, das sich gelohnt hat! #emoji.face.party
 == Tag 9 (Fliesen in einem Kinosaal?)
 
 Ja, nee... Nächster Tag bitte.
+
+== Tag 10 (Knöpfe drücken!)
+
+#text(0.86em)[
+  Das Problem lässt sich als ganzzahliges linear Problem auffassen:
+  $
+  min_(x in ZZ^n) { sum_(i=1)^n x_i mid(|) A x = b, x >= 0 },
+  $
+  wobei $A = (a_(i j))_(i=1,...,m,j=1,...,n) in {0,1}^(m times n), b = (b_j)_(j=1,...,m) in ZZ^m$.
+  - $x_i$ angibt, wie oft die $i$-te Knopfkombination gedrückt werden soll,
+  - $a_(i j) in {0, 1}$ gibt an, ob dass Drücken der $i$-ten Knopfkombination
+    den $j$-te Joltage-Wert erhöht und
+  - $b_j$ ist der angeforderte Joltage-Wert.
+
+  Gegen das Problem werfen wir den ILP solver unserer Wahl -- also nicht weiter
+  spannend, wenn man keinen anderen Lösungsweg wählt.
+]
+
