@@ -40,5 +40,5 @@ minPresses (Machine diag sems _) = go 0 (fromList [Seq.replicate (length diag) F
     toggle = foldr (\b l' -> Seq.adjust not b l')
 
 main :: IO ()
-main = app (many manP) (print . sum . map minPresses)  -- X
+main = app (many manP) (print . sum . map minPresses)  -- 473
 
