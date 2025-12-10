@@ -23,7 +23,7 @@ This command simplifies the previous command, allowing you to run the solution
 for day `X` and part `Y` with `aoc X Y`. It installs any missing dependencies
 and compiles the program.
 
-
+<!--
 ## Challenges
 
 I use Advent of Code to explore new concepts. These are some things, formulated
@@ -38,4 +38,5 @@ code. After all, it is all about having fun.
 - Use [GHC language extensions](https://ghc.gitlab.haskell.org/ghc/doc/users_guide/exts.html)
   - OverloadedLists
   - View Patterns, Pattern Synonyms
+-->
 
