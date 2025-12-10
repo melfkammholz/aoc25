@@ -5,7 +5,6 @@ import MyPrelude
 import GHC.Generics (Generic)
 import Data.Sequence (Seq)
 import qualified Data.Sequence as Seq
-import Debug.Trace
 import Data.Hashable (Hashable)
 import Data.HashSet (HashSet)
 import qualified Data.HashSet as HashSet
@@ -26,6 +25,7 @@ manP = do
   req <- reqP <* newline
   return (Machine diag sems req)
 
+
 minPresses :: Machine -> Int
 minPresses (Machine diag sems _) = go 0 (fromList [Seq.replicate (length diag) False]) Seq.empty HashSet.empty
   where
@@ -38,6 +38,7 @@ minPresses (Machine diag sems _) = go 0 (fromList [Seq.replicate (length diag) F
       | otherwise       = go d ls (next Seq.>< fromList (map (toggle l) sems)) (insert l seen)
 
     toggle = foldr (\b l' -> Seq.adjust not b l')
+
 
 main :: IO ()
 main = app (many manP) (print . sum . map minPresses)  -- 473
