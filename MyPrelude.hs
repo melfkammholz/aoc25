@@ -11,7 +11,7 @@ module MyPrelude (
 
          Parser, numP, spaces, Grid, gridP,
 
-         sepBy, oneOf, char, digit, newline,
+         sepBy, oneOf, char, digit, newline, between,
 
          ModInt, modInt, toInt, moddiv, modinv,
 
