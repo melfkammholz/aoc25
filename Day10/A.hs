@@ -30,13 +30,14 @@ minPresses :: Machine -> Int
 minPresses (Machine diag sems _) = go 0 (fromList [Seq.replicate (length diag) False]) Seq.empty HashSet.empty
   where
     diag' = Seq.fromList (map (== '#') diag)
+
     go d Seq.Empty      next seen = go (d + 1) next Seq.empty seen
     go d (l Seq.:<| ls) next seen
       | l `isElem` seen = go d ls next seen
       | diag' == l      = d
       | otherwise       = go d ls (next Seq.>< fromList (map (toggle l) sems)) (insert l seen)
 
-    toggle l = foldr (\b l' -> Seq.adjust not b l') l
+    toggle = foldr (\b l' -> Seq.adjust not b l')
 
 main :: IO ()
 main = app (many manP) (print . sum . map minPresses)  -- X

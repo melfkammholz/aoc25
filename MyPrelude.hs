@@ -32,14 +32,22 @@ module MyPrelude (
 
          Vec3(..), vec3X, vec3Y, vec3Z, norm2sq, dist2sq,
 
-         minmax
+         minmax,
+
+         fromString,
+
+         fromJust,
+         (<&>)
        ) where
 
 import Control.Applicative
 import Data.List (find, foldl', sort, sortOn, transpose)
 import Data.Proxy
 import Data.Kind
+import Data.String
+import Data.Maybe
 import Data.Foldable (Foldable)
+import Data.Functor ((<&>))
 import qualified Data.Array as Array
 import Data.Array (Array)
 import qualified Data.List as List

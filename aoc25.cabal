@@ -10,6 +10,7 @@ library
     extra,
     hashable,
     parsec >= 3.1.18,
+    MIP,
     unordered-containers,
     vector
   other-modules:

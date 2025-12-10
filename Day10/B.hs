@@ -1,20 +1,15 @@
-{-# LANGUAGE DeriveGeneric #-}
 module Day10.B where
 
 import MyPrelude
-import GHC.Generics (Generic)
-import Data.Sequence (Seq)
-import qualified Data.Sequence as Seq
-import Debug.Trace
-import Data.Hashable (Hashable)
-import Data.HashSet (HashSet)
-import qualified Data.HashSet as HashSet
+import qualified Data.Map as Map
+import Data.Scientific (toBoundedInteger)
+import qualified Numeric.Optimization.MIP as MIP
+import Numeric.Optimization.MIP ((.==.))
+import Numeric.Optimization.MIP.Solver
 
 
 data Machine = Machine String [[Int]] [Int]
-  deriving (Eq, Generic, Show)
-
-instance Hashable Machine
+  deriving Show
 
 manP :: Parser Machine
 manP = do
@@ -26,21 +21,34 @@ manP = do
   req <- reqP <* newline
   return (Machine diag sems req)
 
-minPresses :: Machine -> Int
-minPresses (Machine _ sems req) = go 0 (fromList [req']) Seq.empty HashSet.empty
-  where
-    req' = Seq.fromList req
 
-    go d Seq.Empty      next seen = go (d + 1) next Seq.empty seen
-    go d (l Seq.:<| ls) next seen
-      | l `isElem` seen || not (feasible l) = go d ls next seen
-      | all (== 0) l    = d
-      | otherwise       = go d ls (next Seq.>< fromList (map (toggle l) sems)) (insert l seen)
+minPresses :: Machine -> IO Int
+minPresses (Machine _ sems req) =
+  let n = length req
+      m = length sems
+      vs = ['x' : show i | i <- [0..m - 1]]
+      xs = map (MIP.varExpr . fromString) vs
 
-    toggle l = foldr (\b l' -> Seq.adjust (-1) b l') l
+      obj = sum xs
 
-    feasible = all (<= 0)
+      cs = [0..n - 1] <&> \k ->
+             let is = [i | (i, sem) <- zip [0..] sems, k `elem` sem]
+              in sum (map (xs !!) is) .==. fromIntegral (req !! k)
+
+      prob = MIP.def { MIP.objectiveFunction =
+                         MIP.def { MIP.objDir = MIP.OptMin
+                                 , MIP.objExpr = obj
+                                 }
+                     , MIP.constraints = cs
+                     , MIP.varDomains =
+                         Map.fromList (zip (map fromString vs)
+                                           (repeat (MIP.IntegerVariable, (0, MIP.PosInf))))
+                     }
+   in do
+     sol <- solve cbc (MIP.def { solveTimeLimit = Nothing }) prob
+     return (fromJust (MIP.solObjectiveValue sol >>= toBoundedInteger))
+
 
 main :: IO ()
-main = app (many manP) (print . sum . map minPresses)  -- X
+main = app (many manP) ((print . sum =<<) . mapM minPresses)  -- 18681
 
