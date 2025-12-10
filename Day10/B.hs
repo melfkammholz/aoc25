@@ -35,15 +35,16 @@ minPresses (Machine _ sems req) =
              let is = [i | (i, sem) <- zip [0..] sems, k `elem` sem]
               in sum (map (xs !!) is) .==. fromIntegral (req !! k)
 
-      prob = MIP.def { MIP.objectiveFunction =
-                         MIP.def { MIP.objDir = MIP.OptMin
-                                 , MIP.objExpr = obj
-                                 }
-                     , MIP.constraints = cs
-                     , MIP.varDomains =
-                         Map.fromList (zip (map fromString vs)
-                                           (repeat (MIP.IntegerVariable, (0, MIP.PosInf))))
-                     }
+      ds = Map.fromList (zip (map fromString vs)
+                             (repeat (MIP.IntegerVariable, (0, MIP.PosInf))))
+
+      prob =
+        MIP.def { MIP.objectiveFunction = MIP.def { MIP.objDir = MIP.OptMin
+                                                  , MIP.objExpr = obj
+                                                  }
+                , MIP.constraints       = cs
+                , MIP.varDomains        = ds
+                }
    in do
      sol <- solve cbc (MIP.def { solveTimeLimit = Nothing }) prob
      return (fromJust (MIP.solObjectiveValue sol >>= toBoundedInteger))
