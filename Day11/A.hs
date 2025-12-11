@@ -3,6 +3,7 @@ module Day11.A where
 import MyPrelude
 import Control.Monad
 import Control.Monad.ST (runST)
+import qualified Data.HashSet as HashSet
 import qualified Data.Vector.Unboxed.Mutable as MVU
 
 
@@ -11,7 +12,7 @@ graphP = do
   let adjP = (,) <$> (many letter <* string ": ")
                  <*> (many letter `sepBy` char ' ' <* newline)
   adjs <- many adjP
-  let ms    = nub (filter (`notElem` map fst adjs) (concatMap snd adjs))
+  let ms = toList (fromList (concatMap snd adjs) `HashSet.difference` fromList (map fst adjs))
       adjs' = adjs ++ [(m, []) | m <- ms]
   return (graphFromEdges [((), v, ws) | (v, ws) <- adjs'])
 
