@@ -28,7 +28,7 @@ paths (graph, nodeFromVertex, vertexFromKey) = runST $ do
           when (v /= w) (MVU.unsafeWrite dp w 0)
       let (_, _, ws) = nodeFromVertex v
       m <- MVU.unsafeRead dp v
-      mapM_ (MVU.unsafeModify dp (+ m) . vertexFromKey) ws
+      forM_ ws (MVU.unsafeModify dp (+ m) . vertexFromKey)
     MVU.unsafeRead dp out
 
 

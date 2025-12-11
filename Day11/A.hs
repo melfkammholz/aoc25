@@ -25,7 +25,7 @@ paths (graph, nodeFromVertex, vertexFromKey) = runST $ do
     forM_ (topSort graph) $ \v -> do
       let (_, _, ws) = nodeFromVertex v
       m <- MVU.unsafeRead dp v
-      mapM_ (MVU.unsafeModify dp (+ m) . vertexFromKey) ws
+      forM_ ws (MVU.unsafeModify dp (+ m) . vertexFromKey)
     MVU.unsafeRead dp out
 
 
