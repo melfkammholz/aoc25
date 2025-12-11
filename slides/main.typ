@@ -30,16 +30,21 @@
 
 == Tag 1 (Drehknopf-Klicks eines Safes)
 
-#text(0.8em, align(center + horizon)[
+#text(0.67em, align(center + horizon)[
   ```hs
   data Rot = RotL Int | RotR Int deriving Show
 
+  pattern Negative :: Int -> Int
+  pattern Negative n <- (negate -> n)
+
   dist :: Rot -> Int
-  dist (RotL n) = -n
-  dist (RotR n) = n
+  dist (RotL (Negative n)) = n
+  dist (RotR n)            = n
+  -- dist (RotL (Negative n); RotR n) = n  -- not supported by OrPatterns yet
 
   pattern Rot :: Int -> Rot
   pattern Rot n <- (dist -> n)
+
 
   password :: [Rot] -> Int
   -- lame: password = lengthOn (== 0) . scanl (\x (Rot n) -> (x + n) `mod` 100) 50
