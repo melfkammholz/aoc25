@@ -265,7 +265,7 @@ access g = m + if m > 0 then access g' else 0
 #align(center + horizon)[
   ```hs
   fresh :: Database -> Int
-  fresh (Database rs _) = go rs
+  fresh (Database (Sorted rs) _) = go rs
     where
       go [r] = size r
       go (r1@(Range a1 b1) : r2@(Range a2 b2) : rs)
