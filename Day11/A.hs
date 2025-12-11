@@ -16,20 +16,19 @@ graphP = do
   return (graphFromEdges [((), v, ws) | (v, ws) <- adjs'])
 
 
-paths :: (Graph, Vertex -> ((), String, [String]), String -> Maybe Vertex) -> Int
+paths :: (Graph, Vertex -> ((), String, [String]), String -> Vertex) -> Int
 paths (graph, nodeFromVertex, vertexFromKey) = runST $ do
-    let n   = length graph
-        you = fromJust (vertexFromKey "you")
-        out = fromJust (vertexFromKey "out")
+    let n = length graph
+        [you, out] = vertexFromKey <$> ["you", "out"]
     dp <- MVU.new n
     MVU.unsafeWrite dp you 1
     forM_ (topSort graph) $ \v -> do
       let (_, _, ws) = nodeFromVertex v
       m <- MVU.unsafeRead dp v
-      mapM_ (MVU.unsafeModify dp (+ m) . fromJust . vertexFromKey) ws
+      mapM_ (MVU.unsafeModify dp (+ m) . vertexFromKey) ws
     MVU.unsafeRead dp out
 
 
 main :: IO ()
-main = app graphP (print . paths)  -- 574
+main = app graphP (print . paths . fmap (fromJust .))  -- 574
 
