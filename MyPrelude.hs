@@ -71,8 +71,8 @@ import Text.Printf
 
 app :: Parser a -> (a -> IO ()) -> IO ()
 app p f = do
-  inp <- getContents
-  either print (time . f) (parse p "<stdin>" inp)
+  !inp <- parse p "<stdin>" <$> getContents
+  either print (time . f) inp
 
 time :: IO a -> IO a
 time act = do
