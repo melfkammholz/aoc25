@@ -5,13 +5,14 @@
 module MyPrelude (
          app,
          hornerL, hornerR,
-         cartesian, chunksOf, lengthOn, find, foldl', sort, sortOn, transpose, unsnoc,
+         cartesian, chunksOf, lengthOn, find, foldl', sort, sortOn, transpose,
+         unsnoc, (\\), nub,
 
          module Control.Applicative,
 
          Parser, numP, spaces, Grid, gridP,
 
-         sepBy, oneOf, char, digit, newline, between,
+         sepBy, oneOf, char, digit, newline, between, string, letter,
 
          ModInt, modInt, toInt, moddiv, modinv,
 
@@ -27,7 +28,8 @@ module MyPrelude (
 
          BoolAlgebra(..),
 
-         Graph, Graph.graphFromEdges, Graph.indegree,
+         Graph, Graph.Vertex, Graph.graphFromEdges, Graph.indegree, Graph.topSort,
+         Graph.vertices,
          deleteVertices,
 
          Vec3(..), vec3X, vec3Y, vec3Z, norm2sq, dist2sq,
@@ -41,7 +43,7 @@ module MyPrelude (
        ) where
 
 import Control.Applicative
-import Data.List (find, foldl', sort, sortOn, transpose)
+import Data.List (find, foldl', sort, sortOn, transpose, (\\), nub)
 import Data.Proxy
 import Data.Kind
 import Data.String
