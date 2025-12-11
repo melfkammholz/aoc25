@@ -16,7 +16,7 @@ module MyPrelude (
 
          module Utils.ModInt,
 
-         zalg,
+         module Utils.ZAlg,
 
          Container(..),
          UnorderedContainer(..),
@@ -43,6 +43,7 @@ module MyPrelude (
        ) where
 
 import Utils.ModInt
+import Utils.ZAlg
 
 import Control.Applicative
 import Data.List (find, foldl', sort, sortOn, transpose, (\\), nub)
@@ -122,22 +123,6 @@ spaces = many (char ' ') *> pure ()
 
 newline :: Parser ()
 newline = spaces *> char '\n' *> pure ()
-
-
-zalg :: String -> Seq Int
-zalg s = go 1 0 0 [n]
-  where
-    n = length s
-    s' = fromList s :: Array Int Char
-
-    go i _ _ z | i == n = z
-    go i l r z          = go (i + 1) l' r' (z |> zi)
-      where
-        c = if i < r then min (z ! (i - l)) (r - i) else 0
-        !zi = match c
-        match j = if ok then 1 + match (j + 1) else 0
-          where ok = i + j < n && s' ! j == s' ! (i + j)
-        (l', r') = if i + zi > r then (i, i + zi) else (l, r)
 
 
 class Container c where
