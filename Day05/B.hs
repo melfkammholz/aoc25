@@ -16,11 +16,8 @@ databaseP = do
   return (Database rs ids)
 
 
-prepare :: Database -> Database
-prepare (Database rs ids) = Database (sort rs) (sort ids)
-
 fresh :: Database -> Int
-fresh (Database rs _) = go rs
+fresh (Database (Sorted rs) _) = go rs
   where
     go [r] = size r
     go (r1@(Range a1 b1) : r2@(Range a2 b2) : rs)
@@ -29,5 +26,5 @@ fresh (Database rs _) = go rs
 
 
 main :: IO ()
-main = app databaseP (print . fresh . prepare)  -- 346240317247002
+main = app databaseP (print . fresh)  -- 346240317247002
 

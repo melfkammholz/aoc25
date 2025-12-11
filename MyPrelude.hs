@@ -1,12 +1,15 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE OverloadedLists #-}
+{-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE ViewPatterns #-}
 module MyPrelude (
          app,
          hornerL, hornerR,
          cartesian, chunksOf, lengthOn, find, foldl', sort, sortOn, transpose,
          unsnoc, (\\), nub,
+         pattern Sorted,
 
          module Control.Applicative,
 
@@ -82,6 +85,9 @@ time act = do
   printf "%.3fs\n" (fromIntegral (t2 - t1) / (10 ^ 12) :: Double)
   return x
 
+
+pattern Sorted :: Ord a => [a] -> [a]
+pattern Sorted xs <- (sort -> xs)
 
 hornerL :: (Foldable t, Num a) => t a -> a
 hornerL = foldl' (\x d -> x * 10 + d) 0
