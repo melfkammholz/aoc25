@@ -11,10 +11,8 @@ rangesP = (rangeP numP `sepBy` char ',') <* newline
 
 
 isRep :: String -> Bool
-isRep s =
-  let n = length s
-      z = zalg s
-   in VU.ifoldr' (\i zi b -> b || i + zi == n && gcd i zi == i) False z
+isRep s = VU.ifoldr' (\i zi -> (|| i + zi == n && gcd i zi == i)) False (zalg s)
+  where n = length s
 
 silly :: Range ProductID -> [ProductID]
 silly (Range a b) = filter (isRep . show) [a..b]

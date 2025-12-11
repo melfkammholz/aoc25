@@ -32,8 +32,7 @@
 
 #text(0.8em, align(center + horizon)[
   ```hs
-  data Rot = RotL Int | RotR Int
-    deriving Show
+  data Rot = RotL Int | RotR Int deriving Show
 
   dist :: Rot -> Int
   dist (RotL n) = -n
@@ -46,7 +45,6 @@
   -- lame: password = lengthOn (== 0) . scanl (\x (Rot n) -> (x + n) `mod` 100) 50
   password = lengthOn (== 0) . scanl (\x (Rot n) -> x + modInt n) (modInt @100 50)
 
-
   -- scanl f x0 [x1, x2, ...] = x0 : f x0 x1 : f (f x0 x1) x2 : ...
   ```
 ])
@@ -56,16 +54,16 @@
 
 #text(0.71em, align(center + horizon)[
   ```hs
-  data ModInt n = MI !Int
-    deriving Eq
+  data ModInt n = MI !Int deriving Eq
 
   type family Modulus (m :: Nat) :: Constraint where
-    Modulus m =
-      (KnownNat m, NonZero m ('Text "Modulus cannot be zero."))
+    Modulus m = (KnownNat m, NonZero m ('Text "Modulus cannot be zero."))
 
   modInt :: forall m. Modulus m => Int -> ModInt m
   modInt x = MI (x `smod` fromInteger (natVal (Proxy @m)))
 
+  {-# INLINE smod #-}
+  {-# SPECIALIZE smod :: Int -> Int -> Int #-}
   smod :: Integral a => a -> a -> a
   smod x m = (x `mod` m + m) `mod` m
 
@@ -94,17 +92,14 @@ $
 
 == Implementierung
 
-#align(center + horizon)[
-  ```hs
-  isRep :: String -> Bool
-  isRep w =
-    let n = length w
-        lcp = zalg w
-     in Seq.foldrWithIndex
-          (\i lcpi b -> b || i + lcpi == n && gcd i lcpi == i)
-          False
-          lcp
-  ```
+#text(0.82em)[
+  #align(center + horizon)[
+    ```hs
+    isRep :: String -> Bool
+    isRep s = VU.ifoldr' (\i zi -> (|| i + zi == n && gcd i zi == i)) False (zalg s)
+      where n = length s
+    ```
+  ]
 ]
 
 
@@ -157,22 +152,23 @@ $
 
 Berechnung der längsten gemeinsamen Präfixe der Suffixe eines Wortes.
 
-#text(0.79em, align(center + horizon)[
-```hs
-  zalg :: String -> Seq Int
-  zalg s = go 1 0 0 [n]
+#text(0.71em, align(center + horizon)[
+  ```hs
+  zalg :: Eq a => [a] -> VU.Vector Int
+  zalg s = runST $ do
+      z <- MVU.new n
+      MVU.unsafeWrite z 0 n
+      go z 1 (0, 0)
+      VU.freeze z
     where
-      n = length s
-      s' = fromList s :: Array Int Int
+      (n, s') = (length s, listArray (0, n - 1) s)
 
-      go i _ _ z | i == n = z
-      go i l r z = go (i + 1) l' r' (z |> zi)
-        where
-          c = if i < r then min (z ! (i - l)) (r - i) else 0
-          zi = match c
-          match j = if ok then 1 + match (j + 1) else 0
-            where ok = i + j < n && s' ! j == s' ! (i + j)
-          (l', r') = if i + zi > r then (i, i + zi) else (l, r)
+      go z i (l, r) = when (i < n) $ do
+        when (i < r) (MVU.unsafeRead z (i - l) >>= \zj -> MVU.unsafeWrite z i (min zj (r - i)))
+        let ok i j = i + j < n && s' ! j == s' ! (i + j)
+        zi <- while (ok i) (+1) <$> MVU.unsafeRead z i
+        MVU.unsafeWrite z i zi
+        go z (i + 1) (if i + zi > r then (i, i + zi) else (l, r))
   ```
 ])
 
@@ -278,8 +274,8 @@ access g = m + if m > 0 then access g' else 0
 ```hs
 app :: Parser a -> (a -> IO ()) -> IO ()
 app p f = do
-  inp <- getContents
-  either print (time . f) (parse p "<stdin>" inp)
+  !inp <- parse p "<stdin>" <$> getContents
+  either print (time . f) inp
 
 inputT :: State String u -> State String u
 inputT s = s { stateInput = input }
@@ -306,8 +302,8 @@ Endlich ein DP, das sich gelohnt hat! #emoji.face.party
     quad + omega(D_(y - 1, x) != mono("^")) dot "dp"(y - 1, x) & quad "sonst"
   )
   $
-  für $y = 0, 1, ..., h - 1$ und $x = 0, 1, ..., w - 1$, wobei $omega(top) = 1$
-  und $omega(bot) = 0$ sind.
+  für das gegebene Diagram $D$, $y = 0, 1, ..., h - 1$ und
+  $x = 0, 1, ..., w - 1$, wobei $omega(top) = 1$ und $omega(bot) = 0$ sind.
 ]
 
 == Tag 8 (Minimal spannende Lichterketten)
