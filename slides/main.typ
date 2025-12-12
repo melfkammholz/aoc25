@@ -199,7 +199,7 @@ und $sum_(k=1)^12 10^(12 - k) a_(i_k)$ maximal ist.
 
 Ist mir aufgefallen, dass man das Problem greedy lösen kann? Nö. Wollte ich
 ein DP sehen und es mithilfe eines DP lösen? Ja.
-#emoji.cocktail.tropical #h(-.6em) #emoji.face.cool
+#emoji.cocktail.tropical #h(-.4em) #emoji.face.cool
 
 == Tag 4 (Gabelstapler und Wände durchbrechen)
 
@@ -378,3 +378,17 @@ Ja, nee... Nächster Tag bitte.
   ```
 ]
 
+== Tag 12 (Bin-Packing mit großen Bins)
+
+Eric Wastl hat uns ein weiteres Mal hinter's Licht geführt.
+
+#align(center + horizon)[
+  ```hs
+  solve :: Situation -> Int
+  solve (gs, rs) = lengthOn id (map fits rs)
+    where
+      as = map (lengthOn (== '#')) gs
+      req = sum . zipWith (*) as
+      fits (w, h, ns) = req ns <= w * h
+  ```
+]
