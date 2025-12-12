@@ -39,7 +39,7 @@ same :: Int -> Int -> UnionFind s -> ST s Bool
 same x y uf = (==) <$> find x uf <*> find y uf
 
 sizes :: UnionFind s -> ST s [Int]
-sizes (UF _ v) = VU.foldr (\v vs -> if v < 0 then (-v) : vs else vs) [] v
+sizes (UF _ v) = VU.foldr' (\v vs -> if v < 0 then (-v) : vs else vs) [] v
 
 numClasses :: UnionFind s -> ST s Int
 numClasses (UF nref _) = readSTRef nref

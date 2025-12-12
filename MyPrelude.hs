@@ -82,8 +82,14 @@ time act = do
   t1 <- getCPUTime
   !x <- act
   t2 <- getCPUTime
-  printf "%.3fs\n" (fromIntegral (t2 - t1) / (10 ^ 12) :: Double)
+  printf "%s\n" (niceTime (fromInteger (t2 - t1) :: Double))
   return x
+
+niceTime :: Double -> String
+niceTime = go ["ps", "ns", "μs", "ms", "s"]
+  where
+    go (u:us) x | x > 1000  = go us (x / 1000)
+                | otherwise = show x ++ u
 
 
 pattern Sorted :: Ord a => [a] -> [a]
@@ -120,7 +126,7 @@ type Grid = Array (Int, Int)
 
 gridP :: Parser a -> Parser (Grid a)
 gridP p = do
-  g <- many (many p <* newline)
+  g <- many (some p <* newline)
   let (h, w) = (length g, length (g ! 0))
   return (Array.listArray ((0, 0), (h - 1, w - 1)) (concat g))
 
